@@ -121,13 +121,13 @@ export const transformIssues = (rawIssues: RawIssue[]): ProcessedIssue[] => {
 export const formatDate = (_date: string | Date, language = 'zh') => {
   const date = new Date(_date);
   const now = new Date();
-  const locale = language === 'zh' ? zhCN : enUS;
+  const locale = ['zh', 'zh-CN'].includes(language) ? zhCN : enUS;
   const formattedDate = formatDistance(date, now, {
     addSuffix: true,
     locale,
   });
 
-  if (language === 'zh') {
+  if (locale === zhCN) {
     if (formattedDate.includes('秒') || formattedDate.includes('分钟')) {
       return formattedDate;
     }

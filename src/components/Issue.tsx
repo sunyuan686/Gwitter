@@ -68,6 +68,7 @@ const UserAvatar = styled.img`
 const Issue = ({ issue }: { issue: ProcessedIssue }) => {
   const { i18n } = useTranslation();
 
+  console.log(i18n.language)
   return (
     <IssueContainer>
       <IssueContent>

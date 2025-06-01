@@ -12,6 +12,6 @@ if (urlParams.code) {
   component = AuthWindow;
 }
 
-const root = ReactDOM.createRoot(document.getElementById('gwitter'));
+const root = ReactDOM.createRoot(document.getElementById('gwitter')!);
 
 root.render(<>{React.createElement(component)}</>);
