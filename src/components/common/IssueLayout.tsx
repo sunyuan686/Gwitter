@@ -22,9 +22,15 @@ export const IssueContent = styled.div`
   overflow: hidden;
   font-size: 15px;
 
+  /* border: 1px solid rgb(212, 212, 216); */
+  /* box-shadow:
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0.15) 2px 0px 8px 0px; */
+
   /* &:hover { */
-    /* box-shadow: 0 0.2em 0.3em 0.1em rgba(200, 200, 200, 0.4); */
-    /* transform: translateY(-1px); */
+  /* box-shadow: 0 0.2em 0.3em 0.1em rgba(200, 200, 200, 0.4); */
+  /* transform: translateY(-1px); */
   /* } */
 
   @media (max-width: 479px) {
@@ -47,6 +53,7 @@ export const IssueBody = styled.div`
   &.markdown-body {
     font-size: 1em;
     letter-spacing: 1px;
+    /* background-color: transparent !important; */
     ol {
       list-style: decimal !important;
     }

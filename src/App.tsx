@@ -4,8 +4,8 @@ import FlipMove from 'react-flip-move';
 import About from './components/About';
 import Egg from './components/Egg';
 import Issue from './components/Issue';
-import LoginButton from './components/LoginButton';
 import SkeletonCard from './components/SkeletonCard';
+import Toolbar from './components/Toolbar';
 import config from './config';
 import { useThrottle } from './hooks';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -20,8 +20,7 @@ const Container = styled.div`
 `;
 
 const IssuesContainer = styled.div`
-  padding-top: 1.25em;
-  letter-spacing: 1px;
+  /* letter-spacing: 1px; */
 `;
 
 const App = () => {
@@ -96,7 +95,6 @@ const App = () => {
 
   useEffect(() => {
     console.log('App mounted, initializing data load');
-    // 清空之前的数据
     setRawIssuesData([]);
     setIssues([]);
     cursorRef.current = null;
@@ -119,7 +117,7 @@ const App = () => {
 
   return (
     <Container>
-      <LoginButton />
+      <Toolbar />
       <About />
       {issues.length > 0 && (
         <>

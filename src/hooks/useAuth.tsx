@@ -13,6 +13,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: { login: string; avatarUrl: string } | null;
   token: string | null;
+  isLoading: boolean;
   login: () => void;
   logout: () => void;
 }
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     null,
   );
   const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('github_token');
@@ -43,9 +45,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
     }
+    setIsLoading(false);
   }, []);
 
   const handleAuthCallback = async (code: string) => {
+    setIsLoading(true);
     try {
       const response = await getUserInfo(code);
       const user = {
@@ -61,6 +65,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem('github_user', JSON.stringify(user));
     } catch (error) {
       console.error('Auth callback error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,12 +79,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       scope: 'public_repo',
     };
     const loginLink = `${githubOauthUrl}?${queryStringify(query)}`;
+    setIsLoading(true);
     windowOpen(loginLink)
       .then((token: unknown) => {
         handleAuthCallback(token as string);
       })
       .catch((error) => {
         console.error('Login error:', error);
+        setIsLoading(false);
       });
   };
 
@@ -86,6 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
+    setIsLoading(false);
     localStorage.removeItem('github_token');
     localStorage.removeItem('github_user');
   };
@@ -94,6 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isAuthenticated,
     user,
     token,
+    isLoading,
     login,
     logout,
   };

@@ -2,7 +2,8 @@
   "auth": {
     "authorizing": "Authorizing...",
     "login": "Login with GitHub",
-    "logout": "Logout"
+    "logout": "Logout",
+    "loading": "Loading..."
   },
   "about": {
     "title": "Details & Summary",
