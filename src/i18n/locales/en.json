@@ -1,6 +1,8 @@
 {
   "auth": {
-    "authorizing": "Authorizing..."
+    "authorizing": "Authorizing...",
+    "login": "Login with GitHub",
+    "logout": "Logout"
   },
   "about": {
     "title": "Details & Summary",
@@ -20,5 +22,14 @@
       "wechat": "WeChat Group",
       "telegram": "TG Channel"
     }
+  },
+  "interaction": {
+    "like": "Like",
+    "liked": "Liked",
+    "comment": "Comment",
+    "comments": "comments",
+    "loginRequired": "Please login first",
+    "loginToLike": "Login to like",
+    "loginToComment": "Login to comment"
   }
 }

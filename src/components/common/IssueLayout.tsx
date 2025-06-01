@@ -17,6 +17,7 @@ export const IssueContent = styled.div`
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
   overflow: hidden;
+  font-size: 15px;
 
   &:hover {
     box-shadow: 0 1em 3em 0.5em rgba(200, 200, 200, 0.4);

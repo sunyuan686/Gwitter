@@ -71,11 +71,22 @@ export interface Label {
   color: string;
 }
 
+export interface Reaction {
+  content: string;
+  user: {
+    login: string;
+  };
+}
+
 export interface RawIssue {
   id: string;
   number: number;
   createdAt: string;
   bodyHTML: string;
+  reactions: {
+    totalCount: number;
+    nodes: Reaction[];
+  };
   comments: {
     totalCount: number;
   };
@@ -89,6 +100,11 @@ export interface ProcessedIssue {
   number: number;
   createdAt: string;
   bodyHTML: string;
+  reactions: {
+    totalCount: number;
+    userReacted: boolean;
+    heartCount: number;
+  };
   comments: number;
   label: Label;
 }
@@ -103,14 +119,23 @@ const transformLabel = (labels: Label[]): Label => {
   return labels[0];
 };
 
-export const transformIssues = (rawIssues: RawIssue[]): ProcessedIssue[] => {
+export const transformIssues = (rawIssues: RawIssue[], currentUser?: string): ProcessedIssue[] => {
   return rawIssues.map(
-    ({ id, number, createdAt, bodyHTML, comments, labels }) => {
+    ({ id, number, createdAt, bodyHTML, reactions, comments, labels }) => {
+      const heartReactions = reactions.nodes.filter(reaction => reaction.content === 'HEART');
+      const heartCount = heartReactions.length;
+      const userReacted = currentUser ? heartReactions.some(reaction => reaction.user.login === currentUser) : false;
+
       return {
         id,
         number,
         createdAt,
         bodyHTML,
+        reactions: {
+          totalCount: reactions.totalCount,
+          userReacted,
+          heartCount,
+        },
         comments: comments.totalCount,
         label: transformLabel(labels.nodes),
       };

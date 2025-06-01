@@ -3,6 +3,7 @@ import 'github-markdown-css/github-markdown.css';
 import { useTranslation } from 'react-i18next';
 import config from '../config';
 import { formatDate, ProcessedIssue } from '../utils';
+import Interaction from './Interaction';
 import Label from './Label';
 import {
   IssueBody,
@@ -12,8 +13,8 @@ import {
 } from './common/IssueLayout';
 
 const Username = styled.span`
-  font-weight: 600;
-  font-size: 1em;
+  font-weight: 700;
+  font-size: 15px;
   color: #132850;
   text-decoration: none;
 `;
@@ -25,8 +26,10 @@ const VerifiedBadge = styled.span`
 `;
 
 const Badge = styled.svg`
-  width: 1em;
-  height: 1em;
+  width: 20px;
+  height: 20px;
+  color: rgb(29, 155, 240);
+  fill: rgb(29, 155, 240);
 `;
 
 const Separator = styled.span`
@@ -68,7 +71,6 @@ const UserAvatar = styled.img`
 const Issue = ({ issue }: { issue: ProcessedIssue }) => {
   const { i18n } = useTranslation();
 
-  console.log(i18n.language)
   return (
     <IssueContainer>
       <IssueContent>
@@ -76,15 +78,11 @@ const Issue = ({ issue }: { issue: ProcessedIssue }) => {
           <UserAvatar src={config.avatar} />
           <Username>{config.owner}</Username>
           <VerifiedBadge>
-            <Badge
-              className="is-badge"
-              viewBox="0 0 512 512"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <Badge viewBox="0 0 22 22">
               <path
-                d="m512 268c0 17.9-4.3 34.5-12.9 49.7s-20.1 27.1-34.6 35.4c.4 2.7.6 6.9.6 12.6 0 27.1-9.1 50.1-27.1 69.1-18.1 19.1-39.9 28.6-65.4 28.6-11.4 0-22.3-2.1-32.6-6.3-8 16.4-19.5 29.6-34.6 39.7-15 10.2-31.5 15.2-49.4 15.2-18.3 0-34.9-4.9-49.7-14.9-14.9-9.9-26.3-23.2-34.3-40-10.3 4.2-21.1 6.3-32.6 6.3-25.5 0-47.4-9.5-65.7-28.6-18.3-19-27.4-42.1-27.4-69.1 0-3 .4-7.2 1.1-12.6-14.5-8.4-26-20.2-34.6-35.4-8.5-15.2-12.8-31.8-12.8-49.7 0-19 4.8-36.5 14.3-52.3s22.3-27.5 38.3-35.1c-4.2-11.4-6.3-22.9-6.3-34.3 0-27 9.1-50.1 27.4-69.1s40.2-28.6 65.7-28.6c11.4 0 22.3 2.1 32.6 6.3 8-16.4 19.5-29.6 34.6-39.7 15-10.1 31.5-15.2 49.4-15.2s34.4 5.1 49.4 15.1c15 10.1 26.6 23.3 34.6 39.7 10.3-4.2 21.1-6.3 32.6-6.3 25.5 0 47.3 9.5 65.4 28.6s27.1 42.1 27.1 69.1c0 12.6-1.9 24-5.7 34.3 16 7.6 28.8 19.3 38.3 35.1 9.5 15.9 14.3 33.4 14.3 52.4zm-266.9 77.1 105.7-158.3c2.7-4.2 3.5-8.8 2.6-13.7-1-4.9-3.5-8.8-7.7-11.4-4.2-2.7-8.8-3.6-13.7-2.9-5 .8-9 3.2-12 7.4l-93.1 140-42.9-42.8c-3.8-3.8-8.2-5.6-13.1-5.4-5 .2-9.3 2-13.1 5.4-3.4 3.4-5.1 7.7-5.1 12.9 0 5.1 1.7 9.4 5.1 12.9l58.9 58.9 2.9 2.3c3.4 2.3 6.9 3.4 10.3 3.4 6.7-.1 11.8-2.9 15.2-8.7z"
-                fill="#1da1f2"
-              />
+                // fill="#1da1f2"
+                d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
+              ></path>
             </Badge>
           </VerifiedBadge>
           <Separator>·</Separator>
@@ -101,6 +99,13 @@ const Issue = ({ issue }: { issue: ProcessedIssue }) => {
         <IssueBody
           className="markdown-body"
           dangerouslySetInnerHTML={{ __html: issue.bodyHTML }}
+        />
+        <Interaction
+          id={issue.number}
+          reactions={issue.reactions}
+          comments={{
+            totalCount: issue.comments,
+          }}
         />
       </IssueContent>
     </IssueContainer>

@@ -114,7 +114,7 @@ class Collapse {
       let contents = panel.querySelector('summary + *');
 
       // On panel open
-      panel.addEventListener('toggle', (e) => {
+      panel.addEventListener('toggle', () => {
         let isReadingHeight = panel.classList.contains(
           this.settings.heightClass,
         );
