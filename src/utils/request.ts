@@ -192,7 +192,7 @@ export const getIssueCommentsQL = ({
     query {
       repository(owner: "${owner}", name: "${repo}") {
         issue(number: ${issueNumber}) {
-          comments(first: 100, orderBy: {field: CREATED_AT, direction: ASC}) {
+          comments(first: 100, orderBy: {field: UPDATED_AT, direction: ASC}) {
             totalCount
             nodes {
               id
