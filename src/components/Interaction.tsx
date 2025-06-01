@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import debounce from 'lodash/debounce';
-import { useCallback, useRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
-import '../style/heart-animation.css';
 import {
   addReactionToIssue,
   createAuthenticatedApi,
@@ -13,6 +12,7 @@ import CommentList from './CommentList';
 
 interface InteractionProps {
   id: number;
+  issueId: string; // GitHub node ID
   reactions: {
     totalCount: number;
     userReacted: boolean;
@@ -39,11 +39,11 @@ const ButtonsContainer = styled.div`
 const InteractionButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   color: #536471;
   background: none;
   border: none;
-  padding: 8px;
+  padding: 8px 0px;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 13px;
@@ -51,26 +51,22 @@ const InteractionButton = styled.button`
   border-radius: 20px;
   min-width: 0;
   position: relative;
-
-  &:active {
-    transform: scale(0.95);
-  }
-
-  &.like-button {
-    padding-left: 0;
-
-    &::before {
-      left: 10px;
-    }
-  }
+  width: 50px;
 
   svg {
     width: 20px;
     height: 20px;
-    transition: color 0.2s;
+    transition:
+      color 0.2s,
+      opacity 0.2s;
     position: relative;
     z-index: 1;
     fill: rgb(83, 100, 113);
+  }
+
+  /* Hide the heart icon during animation */
+  &.is-issue-like-animation svg {
+    opacity: 0;
   }
 
   span {
@@ -98,7 +94,7 @@ const InteractionButton = styled.button`
     content: '';
     position: absolute;
     top: 50%;
-    left: 18px; /* 8px padding + 10px (图标宽度的一半) */
+    left: 10px;
     width: 0;
     height: 0;
     border-radius: 50%;
@@ -186,12 +182,27 @@ const InteractionButton = styled.button`
   }
 `;
 
-const HeartIcon = () => (
-  <svg viewBox="0 0 24 24">
-    <g>
-      <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-    </g>
-  </svg>
+const NumberContainer = styled.span`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  overflow: hidden;
+`;
+
+const HeartIcon = forwardRef<SVGSVGElement, { filled?: boolean }>(
+  ({ filled = false }, ref) => (
+    <svg viewBox="0 0 24 24" ref={ref}>
+      <g>
+        {filled ? (
+          <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+        ) : (
+          <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+        )}
+      </g>
+    </svg>
+  ),
 );
 
 const CommentIcon = () => (
@@ -204,100 +215,44 @@ const CommentIcon = () => (
 
 const Interaction: React.FC<InteractionProps> = ({
   id,
+  issueId,
   reactions,
   comments,
 }) => {
   const { t } = useTranslation();
   const { isAuthenticated, token, login } = useAuth();
-  const likeButtonRef = useRef<HTMLButtonElement>(null);
+
   const [heartCount, setHeartCount] = useState(reactions.heartCount);
   const [liked, setLiked] = useState(reactions.userReacted);
   const [liking, setLiking] = useState(false);
   const [showComments, setShowComments] = useState(false);
 
-  const createParticles = useCallback(() => {
-    if (!likeButtonRef.current) return;
-
-    const button = likeButtonRef.current;
-    const buttonRect = button.getBoundingClientRect();
-    const centerX = buttonRect.left + buttonRect.width / 2;
-    const centerY = buttonRect.top + buttonRect.height / 2;
-
-    let container = document.querySelector('.heart-particles-container');
-    if (!container) {
-      container = document.createElement('div');
-      container.className = 'heart-particles-container';
-      document.body.appendChild(container);
-    }
-
-    for (let i = 0; i < 12; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'heart-particle';
-      particle.innerHTML = '❤';
-      particle.style.color = '#f91880';
-      particle.style.fontSize = `${Math.random() * 10 + 7}px`;
-      particle.style.opacity = '1';
-      particle.style.top = `${centerY}px`;
-      particle.style.left = `${centerX}px`;
-
-      const angle = Math.random() * Math.PI * 2;
-      const distanceX = Math.random() * 90 + 20;
-      const distanceY = Math.random() * 60 + 15;
-      const duration = Math.random() * 1000 + 600;
-
-      particle.style.transform = 'translateX(0) translateY(0) scale(1)';
-      particle.style.transition = `all ${duration}ms ease-out`;
-
-      container.appendChild(particle);
-
-      setTimeout(() => {
-        particle.style.transform = `translateX(${
-          Math.cos(angle) * distanceX
-        }px) translateY(${Math.sin(angle) * distanceY}px) scale(0)`;
-        particle.style.opacity = '0';
-      }, 10);
-
-      setTimeout(() => {
-        if (particle.parentNode === container) {
-          container.removeChild(particle);
-        }
-        if (
-          container.childNodes.length === 0 &&
-          container.parentNode === document.body
-        ) {
-          document.body.removeChild(container);
-        }
-      }, duration + 100);
-    }
-  }, []);
-
-  const toggleLike = useCallback(async () => {
-    if (!isAuthenticated || !token) {
+  const toggleLike = async () => {
+    if (!isAuthenticated) {
       login();
       return;
     }
 
     setLiking(true);
+    const wasLiked = liked;
 
     try {
-      console.log('Toggle like for issue:', id);
+      console.log('Toggle like for issue:', id, liked, token);
 
-      const authenticatedApi = createAuthenticatedApi(token);
-      const issueNodeId = `issue_node_id_${id}`;
+      const authenticatedApi = createAuthenticatedApi(token!);
 
       if (!liked) {
-        await addReactionToIssue(authenticatedApi, issueNodeId, 'HEART');
+        await addReactionToIssue(authenticatedApi, issueId, 'HEART');
         setLiked(true);
         setHeartCount((prev) => prev + 1);
-        createParticles();
       } else {
-        await removeReactionFromIssue(authenticatedApi, issueNodeId, 'HEART');
+        await removeReactionFromIssue(authenticatedApi, issueId, 'HEART');
         setLiked(false);
         setHeartCount((prev) => prev - 1);
       }
     } catch (error) {
       console.error('Failed to toggle like:', error);
-      if (liked) {
+      if (wasLiked) {
         setLiked(false);
         setHeartCount((prev) => prev - 1);
       } else {
@@ -309,7 +264,7 @@ const Interaction: React.FC<InteractionProps> = ({
     setTimeout(() => {
       setLiking(false);
     }, 800);
-  }, [liked, isAuthenticated, token, login, id, createParticles]);
+  };
 
   const handleLike = debounce(toggleLike, 300);
 
@@ -321,11 +276,15 @@ const Interaction: React.FC<InteractionProps> = ({
     setShowComments(!showComments);
   };
 
+  useEffect(() => {
+    setLiked(reactions.userReacted);
+    setHeartCount(reactions.heartCount);
+  }, [reactions.userReacted, reactions.heartCount]);
+
   return (
     <Container>
       <ButtonsContainer>
         <InteractionButton
-          ref={likeButtonRef}
           onClick={handleLike}
           className={`like-button ${liking ? 'is-issue-like-animation' : ''} ${
             liked ? 'is-issue-liked' : ''
@@ -338,8 +297,10 @@ const Interaction: React.FC<InteractionProps> = ({
               : t('interaction.loginToLike')
           }
         >
-          <HeartIcon />
-          {heartCount > 0 && <span>{heartCount}</span>}
+          <HeartIcon filled={liked} />
+          <NumberContainer>
+            <span>{heartCount > 0 ? heartCount : ''}</span>
+          </NumberContainer>
         </InteractionButton>
         <InteractionButton
           onClick={handleComment}
@@ -351,7 +312,7 @@ const Interaction: React.FC<InteractionProps> = ({
           }
         >
           <CommentIcon />
-          {comments.totalCount > 0 && <span>{comments.totalCount}</span>}
+          <span>{comments.totalCount > 0 ? comments.totalCount : ''}</span>
         </InteractionButton>
       </ButtonsContainer>
 
