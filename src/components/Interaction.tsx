@@ -1,3 +1,4 @@
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import NumberFlow from '@number-flow/react';
 import { forwardRef, useEffect, useState } from 'react';
@@ -17,6 +18,83 @@ const COLORS = {
   likeHover: 'rgba(249, 24, 128, 0.1)',
   commentHover: 'rgba(29, 161, 242, 0.1)',
 } as const;
+
+const heartPop = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+const particleFlyOut = keyframes`
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--particle-x), var(--particle-y)) scale(0) rotate(var(--particle-rotation));
+    opacity: 0;
+  }
+`;
+
+const Particle = styled.div<{
+  delay: string;
+  duration: string;
+  x: string;
+  y: string;
+  color: string;
+  size: string;
+  initialScale: number;
+  initialRotation: string;
+  shape: 'circle' | 'heart';
+}>`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: ${(props) => props.size};
+  height: ${(props) => props.size};
+  background-color: ${(props) =>
+    props.shape === 'circle' ? props.color : 'transparent'};
+  border-radius: ${(props) => (props.shape === 'circle' ? '50%' : '0')};
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: center;
+  transform: translate(-50%, -50%) scale(${(props) => props.initialScale})
+    rotate(${(props) => props.initialRotation});
+  animation: ${particleFlyOut} ${(props) => props.duration} ease-out forwards;
+  animation-delay: ${(props) => props.delay};
+  --particle-x: ${(props) => props.x};
+  --particle-y: ${(props) => props.y};
+  --particle-rotation: ${(props) => Math.random() * 180 - 90}deg;
+
+  ${(props) =>
+    props.shape === 'heart' &&
+    `
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      left: calc(${props.size} / 2);
+      top: 0;
+      width: calc(${props.size} / 2);
+      height: ${props.size};
+      background: ${props.color};
+      border-radius: calc(${props.size} / 2) calc(${props.size} / 2) 0 0;
+      transform: rotate(-45deg);
+      transform-origin: 0 100%;
+    }
+    &::after {
+      left: 0;
+      transform: rotate(45deg);
+      transform-origin: 100% 100%;
+    }
+  `}
+`;
 
 interface InteractionProps {
   id: number;
@@ -154,6 +232,10 @@ const IconContainer = styled.div`
     fill: ${COLORS.primary};
   }
 
+  &.liked-animation svg {
+    animation: ${heartPop} 0.3s ease-in-out;
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -230,6 +312,48 @@ const CommentIcon = () => (
   </svg>
 );
 
+interface ParticleStyle {
+  x: string;
+  y: string;
+  duration: string;
+  delay: string;
+  color: string;
+  size: string;
+  shape: 'circle' | 'heart';
+  initialScale: number;
+  initialRotation: string;
+}
+
+const generateParticleStyle = (): ParticleStyle => {
+  const angle = Math.random() * 360;
+  const distance = Math.random() * 25 + 25;
+  const x = `${Math.cos(angle * (Math.PI / 180)) * distance}px`;
+  const y = `${Math.sin(angle * (Math.PI / 180)) * distance - 15}px`;
+  const duration = `${Math.random() * 0.4 + 0.5}s`;
+  const delay = `${Math.random() * 0.15}s`;
+  const colors = [COLORS.like, '#ff78c8', '#ff4da6', '#e60073', '#cc0066'];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  const shape = Math.random() > 0.3 ? 'circle' : 'heart';
+  const rawSize =
+    Math.floor(Math.random() * (shape === 'heart' ? 3 : 4)) +
+    (shape === 'heart' ? 5 : 4);
+  const size = `${rawSize}px`;
+  const initialScale = Math.random() * 0.5 + 0.7;
+  const initialRotation = `${Math.random() * 90 - 45}deg`;
+
+  return {
+    x,
+    y,
+    duration,
+    delay,
+    color,
+    size,
+    shape,
+    initialScale,
+    initialRotation,
+  };
+};
+
 const Interaction: React.FC<InteractionProps> = ({
   id,
   issueId,
@@ -243,6 +367,10 @@ const Interaction: React.FC<InteractionProps> = ({
   const [liked, setLiked] = useState(reactions.userReacted);
   const [showComments, setShowComments] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const [animateLike, setAnimateLike] = useState(false);
+  const [particles, setParticles] = useState<
+    Array<{ id: number; style: ParticleStyle }>
+  >([]);
 
   const toggleLike = async () => {
     const wasLiked = liked;
@@ -256,6 +384,16 @@ const Interaction: React.FC<InteractionProps> = ({
       if (!liked) {
         setLiked(true);
         setHeartCount(previousCount + 1);
+
+        setAnimateLike(true);
+        const newParticles = Array.from({
+          length: Math.floor(Math.random() * 6) + 10,
+        }).map((_, i) => ({
+          id: Date.now() + i,
+          style: generateParticleStyle(),
+        }));
+        setParticles(newParticles);
+
         await addReactionToIssue(authenticatedApi, issueId, 'HEART');
       } else {
         setLiked(false);
@@ -297,6 +435,21 @@ const Interaction: React.FC<InteractionProps> = ({
     setHeartCount(reactions.heartCount);
   }, [reactions.userReacted, reactions.heartCount]);
 
+  useEffect(() => {
+    if (animateLike) {
+      const timer = setTimeout(() => {
+        setAnimateLike(false);
+      }, 300);
+      const particleTimer = setTimeout(() => {
+        setParticles([]);
+      }, 1200);
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(particleTimer);
+      };
+    }
+  }, [animateLike]);
+
   return (
     <Container>
       <ButtonsContainer>
@@ -311,8 +464,24 @@ const Interaction: React.FC<InteractionProps> = ({
               : t('interaction.loginToLike')
           }
         >
-          <IconContainer className={`icon-container like-icon`}>
+          <IconContainer
+            className={`icon-container like-icon ${animateLike ? 'liked-animation' : ''}`}
+          >
             <HeartIcon filled={liked} />
+            {particles.map((p) => (
+              <Particle
+                key={p.id}
+                x={p.style.x}
+                y={p.style.y}
+                duration={p.style.duration}
+                delay={p.style.delay}
+                color={p.style.color}
+                size={p.style.size}
+                shape={p.style.shape as 'circle' | 'heart'}
+                initialScale={p.style.initialScale}
+                initialRotation={p.style.initialRotation}
+              />
+            ))}
           </IconContainer>
           <NumberContainer
             className="number-container"
