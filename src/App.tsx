@@ -4,9 +4,11 @@ import FlipMove from 'react-flip-move';
 import About from './components/About';
 import Egg from './components/Egg';
 import Issue from './components/Issue';
+import LoginButton from './components/LoginButton';
 import SkeletonCard from './components/SkeletonCard';
 import config from './config';
 import { useThrottle } from './hooks';
+import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ProcessedIssue, transformIssues } from './utils';
 import { api, getIssuesQL } from './utils/request';
 
@@ -23,9 +25,11 @@ const IssuesContainer = styled.div`
 `;
 
 const App = () => {
+  const { user } = useAuth();
   const [issues, setIssues] = useState<ProcessedIssue[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasNextPage, setHasNextPage] = useState(true);
+  const [rawIssuesData, setRawIssuesData] = useState<any[]>([]);
 
   const cursorRef = useRef<string | null>(null);
   const isLoadingRef = useRef(isLoading);
@@ -56,13 +60,20 @@ const App = () => {
 
       setHasNextPage(nextPage);
       cursorRef.current = endCursor;
-      setIssues((prev) => [...prev, ...transformIssues(data.nodes)]);
+
+      // 保存原始数据
+      setRawIssuesData((prev) => [...prev, ...data.nodes]);
+
+      setIssues((prev) => [
+        ...prev,
+        ...transformIssues(data.nodes, user?.login),
+      ]);
       setIsLoading(false);
     } catch (err) {
       console.error('err:', err);
       setIsLoading(false);
     }
-  }, []);
+  }, [user?.login]);
 
   const handleLazyLoad = useCallback(() => {
     if (isLoadingRef.current) return;
@@ -85,6 +96,11 @@ const App = () => {
 
   useEffect(() => {
     console.log('App mounted, initializing data load');
+    // 清空之前的数据
+    setRawIssuesData([]);
+    setIssues([]);
+    cursorRef.current = null;
+
     getIssues();
     window.addEventListener('scroll', handleScroll, false);
 
@@ -92,10 +108,18 @@ const App = () => {
       console.log('App unmounting, cleaning up listeners');
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [getIssues, handleScroll]);
+
+  // 当用户登录状态改变时，重新处理已有的 issues
+  useEffect(() => {
+    if (rawIssuesData.length > 0) {
+      setIssues(transformIssues(rawIssuesData, user?.login));
+    }
+  }, [user?.login, rawIssuesData]);
 
   return (
     <Container>
+      <LoginButton />
       {issues.length > 0 && (
         <>
           <About />
@@ -108,7 +132,7 @@ const App = () => {
               {issues.map((issue, index) => (
                 <div
                   ref={index === issues.length - 1 ? lastIssueRef : undefined}
-                  key={`${issue.id}`}
+                  key={`${issue.id}-${index}`}
                 >
                   <Issue issue={issue} />
                 </div>
@@ -128,4 +152,12 @@ const App = () => {
   );
 };
 
-export default App;
+const AppWithAuth = () => {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+};
+
+export default AppWithAuth;

@@ -1,6 +1,9 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { parseUrl } from './utils';
+import { getAccessToken } from './utils/request';
 
 const Container = styled.div`
   box-sizing: border-box;
@@ -77,6 +80,30 @@ const SquareInner = styled.span`
 
 const AuthWindow = () => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const code = parseUrl().code;
+    if (code) {
+      getAccessToken(code)
+        .then((res) => {
+          window.opener.postMessage(
+            JSON.stringify({
+              result: res,
+            }),
+            window.opener.location,
+          );
+        })
+        .catch((err) => {
+          window.opener.postMessage(
+            JSON.stringify({
+              error: err.message,
+            }),
+            window.opener.location,
+          );
+          console.error(err);
+        });
+    }
+  }, []);
 
   return (
     <Container>

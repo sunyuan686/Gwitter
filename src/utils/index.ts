@@ -119,12 +119,19 @@ const transformLabel = (labels: Label[]): Label => {
   return labels[0];
 };
 
-export const transformIssues = (rawIssues: RawIssue[], currentUser?: string): ProcessedIssue[] => {
+export const transformIssues = (
+  rawIssues: RawIssue[],
+  currentUser?: string,
+): ProcessedIssue[] => {
   return rawIssues.map(
     ({ id, number, createdAt, bodyHTML, reactions, comments, labels }) => {
-      const heartReactions = reactions.nodes.filter(reaction => reaction.content === 'HEART');
+      const heartReactions = reactions.nodes.filter(
+        (reaction) => reaction.content === 'HEART',
+      );
       const heartCount = heartReactions.length;
-      const userReacted = currentUser ? heartReactions.some(reaction => reaction.user.login === currentUser) : false;
+      const userReacted = currentUser
+        ? heartReactions.some((reaction) => reaction.user.login === currentUser)
+        : false;
 
       return {
         id,
@@ -187,4 +194,77 @@ export const getColorByBgColor = (hexcolor: string) => {
   let b = parseInt(hexcolor.substr(4, 2), 16);
   let yiq = (r * 299 + g * 587 + b * 114) / 1000;
   return yiq >= 128 ? 'black' : 'white';
+};
+
+export const queryStringify = (query: Record<string, string>) => {
+  const queryString = Object.keys(query)
+    .map((key) => `${key}=${encodeURIComponent(query[key] || '')}`)
+    .join('&');
+  return queryString;
+};
+
+export const windowOpen = (_url: string) => {
+  const windowArea: {
+    width: number;
+    height: number;
+    left: number;
+    top: number;
+  } = {
+    width: Math.max(Math.floor(window.outerWidth * 0.4), 400),
+    height: Math.max(Math.floor(window.outerHeight * 0.4), 400),
+    left: 0,
+    top: 0,
+  };
+
+  windowArea.left = Math.floor(
+    window.screenX + (window.outerWidth - windowArea.width) / 2,
+  );
+  windowArea.top = Math.floor(
+    window.screenY + (window.outerHeight - windowArea.height) / 3,
+  );
+
+  const sep = _url.indexOf('?') !== -1 ? '&' : '?';
+  const url = `${_url}${sep}`;
+  const windowOpts = `toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,
+    width=${windowArea.width},height=${windowArea.height},
+    left=${windowArea.left},top=${windowArea.top}`;
+
+  const authWindow = window.open(url, 'Gwitter OAuth Application', windowOpts);
+  const eventMethod =
+    'addEventListener' in window ? 'addEventListener' : 'attachEvent';
+  const eventer = (window as any)[eventMethod];
+  const messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
+  const handleMessage = (e: any, resolve: any, reject: any) => {
+    if (authWindow) {
+      authWindow.close();
+    }
+    if (typeof e.data !== 'string') {
+      return;
+    }
+    const { result, error } = JSON.parse(e.data);
+
+    if (error) {
+      reject(error);
+    }
+
+    if (!result) {
+      reject('Unauthorised');
+    }
+
+    const items = result.split('&');
+    const accessTokenItem = items.find((item: string) =>
+      item.startsWith('access_token='),
+    );
+
+    if (!accessTokenItem || !accessTokenItem.includes('=')) {
+      reject('Unauthorised');
+    }
+    const accessToken = accessTokenItem.split('=')[1];
+
+    resolve(accessToken);
+  };
+
+  return new Promise((resolve, reject) => {
+    eventer(messageEvent, (e: any) => handleMessage(e, resolve, reject), false);
+  });
 };
