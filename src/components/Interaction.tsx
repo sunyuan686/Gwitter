@@ -34,6 +34,7 @@ const ButtonsContainer = styled.div`
   align-items: center;
   gap: 10px;
   margin: 0;
+  margin-left: -8px;
 `;
 
 const InteractionButton = styled.button`
@@ -52,22 +53,6 @@ const InteractionButton = styled.button`
   min-width: 0;
   position: relative;
   width: 50px;
-
-  svg {
-    width: 20px;
-    height: 20px;
-    transition:
-      color 0.2s,
-      opacity 0.2s;
-    position: relative;
-    z-index: 1;
-    fill: rgb(83, 100, 113);
-  }
-
-  /* Hide the heart icon during animation */
-  &.is-issue-like-animation svg {
-    opacity: 0;
-  }
 
   span {
     font-size: 13px;
@@ -90,11 +75,55 @@ const InteractionButton = styled.button`
     word-wrap: break-word;
   }
 
+  &.liked {
+    .icon-container svg {
+      color: #f91880;
+      fill: #f91880;
+    }
+
+    span {
+      color: #f91880;
+    }
+
+    .icon-container:hover {
+      svg {
+        color: #f91880;
+        fill: #f91880;
+      }
+
+      &::before {
+        background: rgba(249, 24, 128, 0.1);
+      }
+    }
+  }
+`;
+
+const IconContainer = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    transition:
+      color 0.2s,
+      opacity 0.2s;
+    position: relative;
+    z-index: 1;
+    fill: rgb(83, 100, 113);
+  }
+
   &::before {
     content: '';
     position: absolute;
     top: 50%;
-    left: 10px;
+    left: 50%;
     width: 0;
     height: 0;
     border-radius: 50%;
@@ -104,40 +133,10 @@ const InteractionButton = styled.button`
     z-index: 0;
   }
 
-  &.is-issue-liked {
+  &.like-icon:hover {
     svg {
       color: #f91880;
       fill: #f91880;
-    }
-
-    span {
-      color: #f91880;
-    }
-
-    &:hover {
-      svg {
-        color: #f91880;
-        fill: #f91880;
-      }
-
-      span {
-        color: #f91880;
-      }
-
-      &::before {
-        background: rgba(249, 24, 128, 0.1);
-      }
-    }
-  }
-
-  &.like-button:hover {
-    svg {
-      color: #f91880;
-      fill: #f91880;
-    }
-
-    span {
-      color: #f91880;
     }
 
     &::before {
@@ -147,14 +146,10 @@ const InteractionButton = styled.button`
     }
   }
 
-  &.comment-button:hover {
+  &.comment-icon:hover {
     svg {
       color: #1d9bf0;
       fill: #1d9bf0;
-    }
-
-    span {
-      color: #1d9bf0;
     }
 
     &::before {
@@ -164,14 +159,10 @@ const InteractionButton = styled.button`
     }
   }
 
-  &.is-comment-active {
+  &.comment-active {
     svg {
       color: #1d9bf0;
       fill: #1d9bf0;
-    }
-
-    span {
-      color: #1d9bf0;
     }
 
     &::before {
@@ -224,7 +215,6 @@ const Interaction: React.FC<InteractionProps> = ({
 
   const [heartCount, setHeartCount] = useState(reactions.heartCount);
   const [liked, setLiked] = useState(reactions.userReacted);
-  const [liking, setLiking] = useState(false);
   const [showComments, setShowComments] = useState(false);
 
   const toggleLike = async () => {
@@ -233,7 +223,6 @@ const Interaction: React.FC<InteractionProps> = ({
       return;
     }
 
-    setLiking(true);
     const wasLiked = liked;
 
     try {
@@ -260,10 +249,6 @@ const Interaction: React.FC<InteractionProps> = ({
         setHeartCount((prev) => prev + 1);
       }
     }
-
-    setTimeout(() => {
-      setLiking(false);
-    }, 800);
   };
 
   const handleLike = debounce(toggleLike, 300);
@@ -286,9 +271,7 @@ const Interaction: React.FC<InteractionProps> = ({
       <ButtonsContainer>
         <InteractionButton
           onClick={handleLike}
-          className={`like-button ${liking ? 'is-issue-like-animation' : ''} ${
-            liked ? 'is-issue-liked' : ''
-          }`}
+          className={`like-button ${liked ? 'liked' : ''}`}
           title={
             isAuthenticated
               ? liked
@@ -297,21 +280,27 @@ const Interaction: React.FC<InteractionProps> = ({
               : t('interaction.loginToLike')
           }
         >
-          <HeartIcon filled={liked} />
+          <IconContainer className={`icon-container like-icon`}>
+            <HeartIcon filled={liked} />
+          </IconContainer>
           <NumberContainer>
             <span>{heartCount > 0 ? heartCount : ''}</span>
           </NumberContainer>
         </InteractionButton>
         <InteractionButton
           onClick={handleComment}
-          className={`comment-button ${showComments ? 'is-comment-active' : ''}`}
+          className={`comment-button ${showComments ? 'comment-active' : ''}`}
           title={
             isAuthenticated
               ? t('interaction.comment')
               : t('interaction.loginToComment')
           }
         >
-          <CommentIcon />
+          <IconContainer
+            className={`icon-container comment-icon ${showComments ? 'comment-active' : ''}`}
+          >
+            <CommentIcon />
+          </IconContainer>
           <span>{comments.totalCount > 0 ? comments.totalCount : ''}</span>
         </InteractionButton>
       </ButtonsContainer>
