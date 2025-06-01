@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import debounce from 'lodash/debounce';
+import NumberFlow from '@number-flow/react';
 import { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
@@ -9,6 +9,14 @@ import {
   removeReactionFromIssue,
 } from '../utils/request';
 import CommentList from './CommentList';
+
+const COLORS = {
+  primary: '#536471',
+  like: '#f91880',
+  comment: '#1d9bf0',
+  likeHover: 'rgba(249, 24, 128, 0.1)',
+  commentHover: 'rgba(29, 161, 242, 0.1)',
+} as const;
 
 interface InteractionProps {
   id: number;
@@ -37,11 +45,26 @@ const ButtonsContainer = styled.div`
   margin-left: -8px;
 `;
 
+const NumberContainer = styled.span<{ $isVisible: boolean }>`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  overflow: hidden;
+  transition:
+    color 0.2s,
+    opacity 0.2s,
+    transform 0.2s;
+  opacity: ${(props) => (props.$isVisible ? 1 : 0)};
+  transform: ${(props) => (props.$isVisible ? 'scale(1)' : 'scale(0.8)')};
+  pointer-events: ${(props) => (props.$isVisible ? 'auto' : 'none')};
+`;
+
 const InteractionButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 5px;
-  color: #536471;
+  color: ${COLORS.primary};
   background: none;
   border: none;
   padding: 8px 0px;
@@ -77,24 +100,36 @@ const InteractionButton = styled.button`
 
   &.liked {
     .icon-container svg {
-      color: #f91880;
-      fill: #f91880;
+      color: ${COLORS.like};
+      fill: ${COLORS.like};
     }
 
-    span {
-      color: #f91880;
+    .number-container {
+      color: ${COLORS.like};
     }
 
     .icon-container:hover {
       svg {
-        color: #f91880;
-        fill: #f91880;
+        color: ${COLORS.like};
+        fill: ${COLORS.like};
       }
 
       &::before {
-        background: rgba(249, 24, 128, 0.1);
+        background: ${COLORS.likeHover};
       }
     }
+  }
+
+  &:hover.like-button .number-container {
+    color: ${COLORS.like};
+  }
+
+  &:hover.comment-button .number-container {
+    color: ${COLORS.comment};
+  }
+
+  &.comment-active .number-container {
+    color: ${COLORS.comment};
   }
 `;
 
@@ -116,7 +151,7 @@ const IconContainer = styled.div`
       opacity 0.2s;
     position: relative;
     z-index: 1;
-    fill: rgb(83, 100, 113);
+    fill: ${COLORS.primary};
   }
 
   &::before {
@@ -135,51 +170,42 @@ const IconContainer = styled.div`
 
   &.like-icon:hover {
     svg {
-      color: #f91880;
-      fill: #f91880;
+      color: ${COLORS.like};
+      fill: ${COLORS.like};
     }
 
     &::before {
       width: 36px;
       height: 36px;
-      background: rgba(249, 24, 128, 0.1);
+      background: ${COLORS.likeHover};
     }
   }
 
   &.comment-icon:hover {
     svg {
-      color: #1d9bf0;
-      fill: #1d9bf0;
+      color: ${COLORS.comment};
+      fill: ${COLORS.comment};
     }
 
     &::before {
       width: 36px;
       height: 36px;
-      background: rgba(29, 161, 242, 0.1);
+      background: ${COLORS.commentHover};
     }
   }
 
   &.comment-active {
     svg {
-      color: #1d9bf0;
-      fill: #1d9bf0;
+      color: ${COLORS.comment};
+      fill: ${COLORS.comment};
     }
 
     &::before {
       width: 36px;
       height: 36px;
-      background: rgba(29, 161, 242, 0.1);
+      background: ${COLORS.commentHover};
     }
   }
-`;
-
-const NumberContainer = styled.span`
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  overflow: hidden;
 `;
 
 const HeartIcon = forwardRef<SVGSVGElement, { filled?: boolean }>(
@@ -216,14 +242,11 @@ const Interaction: React.FC<InteractionProps> = ({
   const [heartCount, setHeartCount] = useState(reactions.heartCount);
   const [liked, setLiked] = useState(reactions.userReacted);
   const [showComments, setShowComments] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
 
   const toggleLike = async () => {
-    if (!isAuthenticated) {
-      login();
-      return;
-    }
-
     const wasLiked = liked;
+    const previousCount = heartCount;
 
     try {
       console.log('Toggle like for issue:', id, liked, token);
@@ -231,27 +254,35 @@ const Interaction: React.FC<InteractionProps> = ({
       const authenticatedApi = createAuthenticatedApi(token!);
 
       if (!liked) {
-        await addReactionToIssue(authenticatedApi, issueId, 'HEART');
         setLiked(true);
-        setHeartCount((prev) => prev + 1);
+        setHeartCount(previousCount + 1);
+        await addReactionToIssue(authenticatedApi, issueId, 'HEART');
       } else {
-        await removeReactionFromIssue(authenticatedApi, issueId, 'HEART');
         setLiked(false);
-        setHeartCount((prev) => prev - 1);
+        setHeartCount(previousCount - 1);
+        await removeReactionFromIssue(authenticatedApi, issueId, 'HEART');
       }
     } catch (error) {
       console.error('Failed to toggle like:', error);
-      if (wasLiked) {
-        setLiked(false);
-        setHeartCount((prev) => prev - 1);
-      } else {
-        setLiked(true);
-        setHeartCount((prev) => prev + 1);
-      }
+      setLiked(wasLiked);
+      setHeartCount(previousCount);
     }
   };
 
-  const handleLike = debounce(toggleLike, 300);
+  const handleLike = () => {
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+
+    if (isToggling) {
+      return;
+    }
+
+    setIsToggling(true);
+    toggleLike();
+    setIsToggling(false);
+  };
 
   const handleComment = () => {
     if (!isAuthenticated) {
@@ -283,8 +314,16 @@ const Interaction: React.FC<InteractionProps> = ({
           <IconContainer className={`icon-container like-icon`}>
             <HeartIcon filled={liked} />
           </IconContainer>
-          <NumberContainer>
-            <span>{heartCount > 0 ? heartCount : ''}</span>
+          <NumberContainer
+            className="number-container"
+            $isVisible={heartCount > 0}
+          >
+            <NumberFlow
+              transformTiming={{ duration: 150, easing: 'ease-in-out' }}
+              spinTiming={{ duration: 150, easing: 'ease-in-out' }}
+              opacityTiming={{ duration: 150, easing: 'ease-in-out' }}
+              value={heartCount}
+            />
           </NumberContainer>
         </InteractionButton>
         <InteractionButton
@@ -301,7 +340,17 @@ const Interaction: React.FC<InteractionProps> = ({
           >
             <CommentIcon />
           </IconContainer>
-          <span>{comments.totalCount > 0 ? comments.totalCount : ''}</span>
+          <NumberContainer
+            className="number-container"
+            $isVisible={comments.totalCount > 0}
+          >
+            <NumberFlow
+              transformTiming={{ duration: 150, easing: 'ease-in-out' }}
+              spinTiming={{ duration: 150, easing: 'ease-in-out' }}
+              opacityTiming={{ duration: 150, easing: 'ease-in-out' }}
+              value={comments.totalCount}
+            />
+          </NumberContainer>
         </InteractionButton>
       </ButtonsContainer>
 
