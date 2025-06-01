@@ -11,6 +11,7 @@ import {
   IssueContent,
   IssueHeader,
 } from './common/IssueLayout';
+import { Spotlight } from './common/Spotlight';
 
 const Username = styled.span`
   font-weight: 700;
@@ -73,6 +74,7 @@ const Issue = ({ issue }: { issue: ProcessedIssue }) => {
 
   return (
     <IssueContainer>
+      <Spotlight />
       <IssueContent>
         <IssueHeader>
           <UserAvatar src={config.avatar} />

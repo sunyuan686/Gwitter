@@ -120,9 +120,9 @@ const App = () => {
   return (
     <Container>
       <LoginButton />
+      <About />
       {issues.length > 0 && (
         <>
-          <About />
           <IssuesContainer>
             <FlipMove
               appearAnimation="accordionVertical"

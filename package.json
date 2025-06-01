@@ -20,6 +20,7 @@
     "axios": "^1.9.0",
     "balloons-js": "^0.0.3",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.15.0",
     "github-markdown-css": "^5.8.1",
     "i18next": "^23.7.16",
     "i18next-browser-languagedetector": "^8.1.0",
