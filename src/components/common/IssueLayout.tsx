@@ -22,10 +22,10 @@ export const IssueContent = styled.div`
   overflow: hidden;
   font-size: 15px;
 
-  &:hover {
+  /* &:hover { */
     /* box-shadow: 0 0.2em 0.3em 0.1em rgba(200, 200, 200, 0.4); */
     /* transform: translateY(-1px); */
-  }
+  /* } */
 
   @media (max-width: 479px) {
     padding: 0.625em 0.75em;
