@@ -1,0 +1,24 @@
+{
+  "auth": {
+    "authorizing": "Authorizing..."
+  },
+  "about": {
+    "title": "Details & Summary",
+    "gwitter": {
+      "title": "🎉 About Gwitter",
+      "description": "This is a lightweight microblogging application built on GitHub Issues. Here I record my thoughts on technology, insights into life, and some interesting discoveries. Welcome to join the discussion."
+    },
+    "content": {
+      "title": "✨ About Content",
+      "categories": "There are {{count}} categories:"
+    },
+    "subscription": {
+      "title": "🔊 About Subscription",
+      "watch": "Watch",
+      "join": "Join",
+      "repo": "Gwitter Repository",
+      "wechat": "WeChat Group",
+      "telegram": "TG Channel"
+    }
+  }
+}
