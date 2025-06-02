@@ -24,6 +24,12 @@
       "telegram": "TG 频道"
     }
   },
+  "egg": {
+    "message": "感谢浏览！",
+    "hope": "期待再次相见",
+    "comment": "// TODO: 添加更多有趣内容",
+    "runCode": "运行代码"
+  },
   "interaction": {
     "like": "点赞",
     "liked": "已点赞",
@@ -32,5 +38,23 @@
     "loginRequired": "请先登录后再进行操作",
     "loginToLike": "登录后点赞",
     "loginToComment": "登录后评论"
+  },
+  "comments": {
+    "loading": "加载评论中...",
+    "empty": "暂无评论",
+    "add": "添加评论",
+    "edit": "编辑",
+    "delete": "删除",
+    "cancel": "取消",
+    "save": "保存",
+    "placeholder": "写下你的评论...",
+    "confirmDelete": "确定要删除这条评论吗？",
+    "addSuccess": "评论添加成功",
+    "updateSuccess": "评论更新成功",
+    "deleteSuccess": "评论删除成功",
+    "addFailed": "评论添加失败",
+    "updateFailed": "评论更新失败",
+    "deleteFailed": "评论删除失败",
+    "more": "更多操作"
   }
 }
