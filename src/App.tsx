@@ -29,17 +29,23 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [rawIssuesData, setRawIssuesData] = useState<any[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const cursorRef = useRef<string | null>(null);
   const isLoadingRef = useRef(isLoading);
   const lastIssueRef = useRef<HTMLDivElement>(null);
+  const currentUserRef = useRef(user?.login);
 
   useEffect(() => {
     isLoadingRef.current = isLoading;
   }, [isLoading]);
 
-  const getIssues = useCallback(async () => {
-    console.log('getIssues called, isLoading:', isLoadingRef.current);
+  useEffect(() => {
+    currentUserRef.current = user?.login;
+  }, [user?.login]);
+
+  const loadIssues = useCallback(async () => {
+    console.log('loadIssues called, isLoading:', isLoadingRef.current);
     try {
       const res = await api.post(
         '/graphql',
@@ -53,10 +59,6 @@ const App = () => {
       const data = res.data.data.repository.issues;
       const { hasNextPage: nextPage, endCursor } = data.pageInfo;
 
-      if (!nextPage) {
-        window.removeEventListener('scroll', handleScroll);
-      }
-
       setHasNextPage(nextPage);
       cursorRef.current = endCursor;
 
@@ -65,17 +67,17 @@ const App = () => {
 
       setIssues((prev) => [
         ...prev,
-        ...transformIssues(data.nodes, user?.login),
+        ...transformIssues(data.nodes, currentUserRef.current),
       ]);
       setIsLoading(false);
     } catch (err) {
       console.error('err:', err);
       setIsLoading(false);
     }
-  }, [user?.login]);
+  }, []);
 
   const handleLazyLoad = useCallback(() => {
-    if (isLoadingRef.current) return;
+    if (isLoadingRef.current || !hasNextPage) return;
 
     const clientHeight =
       window.innerHeight || document.documentElement.clientHeight;
@@ -88,27 +90,29 @@ const App = () => {
 
     console.log('handleLazyLoad triggered, starting new load');
     setIsLoading(true);
-    getIssues();
-  }, [getIssues]);
+    loadIssues();
+  }, [loadIssues, hasNextPage]);
 
   const handleScroll = useThrottle(handleLazyLoad, 200);
 
   useEffect(() => {
-    console.log('App mounted, initializing data load');
-    setRawIssuesData([]);
-    setIssues([]);
-    cursorRef.current = null;
+    if (!isInitialized) {
+      console.log('App mounted, initializing data load');
+      loadIssues();
+      setIsInitialized(true);
+    }
+  }, [isInitialized, loadIssues]);
 
-    getIssues();
-    window.addEventListener('scroll', handleScroll, false);
+  useEffect(() => {
+    if (isInitialized && hasNextPage) {
+      window.addEventListener('scroll', handleScroll, false);
 
-    return () => {
-      console.log('App unmounting, cleaning up listeners');
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [getIssues, handleScroll]);
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isInitialized, hasNextPage, handleScroll]);
 
-  // 当用户登录状态改变时，重新处理已有的 issues
   useEffect(() => {
     if (rawIssuesData.length > 0) {
       setIssues(transformIssues(rawIssuesData, user?.login));
