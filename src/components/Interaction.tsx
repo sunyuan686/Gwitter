@@ -365,6 +365,7 @@ const Interaction: React.FC<InteractionProps> = ({
 
   const [heartCount, setHeartCount] = useState(reactions.heartCount);
   const [liked, setLiked] = useState(reactions.userReacted);
+  const [commentCount, setCommentCount] = useState(comments.totalCount);
   const [showComments, setShowComments] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
   const [animateLike, setAnimateLike] = useState(false);
@@ -434,6 +435,10 @@ const Interaction: React.FC<InteractionProps> = ({
     setLiked(reactions.userReacted);
     setHeartCount(reactions.heartCount);
   }, [reactions.userReacted, reactions.heartCount]);
+
+  useEffect(() => {
+    setCommentCount(comments.totalCount);
+  }, [comments.totalCount]);
 
   useEffect(() => {
     if (animateLike) {
@@ -511,19 +516,24 @@ const Interaction: React.FC<InteractionProps> = ({
           </IconContainer>
           <NumberContainer
             className="number-container"
-            $isVisible={comments.totalCount > 0}
+            $isVisible={commentCount > 0}
           >
             <NumberFlow
               transformTiming={{ duration: 150, easing: 'ease-in-out' }}
               spinTiming={{ duration: 150, easing: 'ease-in-out' }}
               opacityTiming={{ duration: 150, easing: 'ease-in-out' }}
-              value={comments.totalCount}
+              value={commentCount}
             />
           </NumberContainer>
         </InteractionButton>
       </ButtonsContainer>
 
-      <CommentList issueNumber={id} isVisible={showComments} />
+      <CommentList
+        issueNumber={id}
+        issueId={issueId}
+        isVisible={showComments}
+        onCommentCountChange={setCommentCount}
+      />
     </Container>
   );
 };

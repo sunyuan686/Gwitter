@@ -40,6 +40,8 @@
     "loginToComment": "登录后评论"
   },
   "comments": {
+    "adding": "添加中...",
+    "saving": "保存中...",
     "loading": "加载评论中...",
     "empty": "暂无评论",
     "add": "添加评论",
@@ -55,6 +57,9 @@
     "addFailed": "评论添加失败",
     "updateFailed": "评论更新失败",
     "deleteFailed": "评论删除失败",
-    "more": "更多操作"
+    "more": "更多操作",
+    "like": "点赞",
+    "liked": "已点赞",
+    "likes": "个赞"
   }
 }

@@ -202,6 +202,16 @@ export const getIssueCommentsQL = ({
               }
               bodyHTML
               createdAt
+              updatedAt
+              reactions(first: 100) {
+                totalCount
+                nodes {
+                  content
+                  user {
+                    login
+                  }
+                }
+              }
             }
           }
         }
@@ -228,6 +238,7 @@ export const addCommentToIssue = async (
             }
             bodyHTML
             createdAt
+            updatedAt
           }
         }
       }
@@ -259,4 +270,113 @@ export const getAccessToken = async (code: string) => {
     code,
   });
   return response.data;
+};
+
+// Update comment
+export const updateComment = async (
+  authenticatedApi: any,
+  commentId: string,
+  body: string,
+) => {
+  const mutation = `
+    mutation UpdateIssueComment($commentId: ID!, $body: String!) {
+      updateIssueComment(input: {id: $commentId, body: $body}) {
+        issueComment {
+          id
+          author {
+            login
+            avatarUrl
+          }
+          bodyHTML
+          createdAt
+          updatedAt
+        }
+      }
+    }
+  `;
+
+  return authenticatedApi.post('/graphql', {
+    query: mutation,
+    variables: {
+      commentId,
+      body,
+    },
+  });
+};
+
+// Delete comment
+export const deleteComment = async (
+  authenticatedApi: any,
+  commentId: string,
+) => {
+  const mutation = `
+    mutation DeleteIssueComment($commentId: ID!) {
+      deleteIssueComment(input: {id: $commentId}) {
+        clientMutationId
+      }
+    }
+  `;
+
+  return authenticatedApi.post('/graphql', {
+    query: mutation,
+    variables: {
+      commentId,
+    },
+  });
+};
+
+// Add reaction to comment
+export const addReactionToComment = async (
+  authenticatedApi: any,
+  subjectId: string,
+  content: string,
+) => {
+  const mutation = `
+    mutation AddReaction($subjectId: ID!, $content: ReactionContent!) {
+      addReaction(input: {subjectId: $subjectId, content: $content}) {
+        reaction {
+          content
+          user {
+            login
+          }
+        }
+      }
+    }
+  `;
+
+  return authenticatedApi.post('/graphql', {
+    query: mutation,
+    variables: {
+      subjectId,
+      content,
+    },
+  });
+};
+
+// Remove reaction from comment
+export const removeReactionFromComment = async (
+  authenticatedApi: any,
+  subjectId: string,
+  content: string,
+) => {
+  const mutation = `
+    mutation RemoveReaction($subjectId: ID!, $content: ReactionContent!) {
+      removeReaction(input: {subjectId: $subjectId, content: $content}) {
+        reaction {
+          content
+          user {
+            login
+          }
+        }
+      }
+    }
+  `;
+
+  return authenticatedApi.post('/graphql', {
+    query: mutation,
+    variables: {
+      subjectId,
+      content,
+    },
+  });
 };

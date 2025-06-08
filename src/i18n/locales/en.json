@@ -40,6 +40,8 @@
     "loginToComment": "Login to comment"
   },
   "comments": {
+    "adding": "Adding...",
+    "saving": "Saving...",
     "loading": "Loading comments...",
     "empty": "No comments yet",
     "add": "Add Comment",
@@ -55,6 +57,9 @@
     "addFailed": "Failed to add comment",
     "updateFailed": "Failed to update comment",
     "deleteFailed": "Failed to delete comment",
-    "more": "More actions"
+    "more": "More actions",
+    "like": "Like",
+    "liked": "Liked",
+    "likes": "likes"
   }
 }
