@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import 'github-markdown-css/github-markdown.css';
 import { useTranslation } from 'react-i18next';
 import config from '../config';
-import { formatDate, ProcessedIssue } from '../utils';
+import { formatDate, ProcessedIssue, processLinksInHTML } from '../utils';
 import Interaction from './Interaction';
 import Label from './Label';
 import {
@@ -97,7 +97,9 @@ const Issue = ({ issue }: { issue: ProcessedIssue }) => {
         </IssueHeader>
         <IssueBody
           className="markdown-body"
-          dangerouslySetInnerHTML={{ __html: issue.bodyHTML }}
+          dangerouslySetInnerHTML={{
+            __html: processLinksInHTML(issue.bodyHTML),
+          }}
         />
         <Interaction
           id={issue.number}

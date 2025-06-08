@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import config from '../config';
 import { useAuth } from '../hooks/useAuth';
-import { formatDate } from '../utils';
+import { formatDate, processLinksInHTML } from '../utils';
 import {
   addCommentToIssue,
   api,
@@ -53,10 +53,13 @@ const CommentsContainer = styled.div<{ isVisible: boolean }>`
 
 const CommentsContent = styled.div<{ isVisible: boolean }>`
   opacity: ${(props) => (props.isVisible ? '1' : '0')};
-  transform: ${(props) => (props.isVisible ? 'translateY(0)' : 'translateY(-8px)')};
+  transform: ${(props) =>
+    props.isVisible ? 'translateY(0)' : 'translateY(-8px)'};
   transition:
-    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) ${(props) => (props.isVisible ? '0.1s' : '0s')},
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) ${(props) => (props.isVisible ? '0.1s' : '0s')};
+    opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+      ${(props) => (props.isVisible ? '0.1s' : '0s')},
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+      ${(props) => (props.isVisible ? '0.1s' : '0s')};
   will-change: opacity, transform;
   padding: 16px 0;
   contain: layout style;
@@ -247,8 +250,6 @@ const CommentItemWithHover = styled(CommentItem)`
   }
 `;
 
-
-
 const LoadingText = styled.div`
   text-align: center;
   color: #657786;
@@ -320,8 +321,11 @@ const ConfirmDialog = styled.div<{ isOpen: boolean }>`
   padding: 24px;
   max-width: 360px;
   width: 90%;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  transform: ${(props) => (props.isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-8px)')};
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: ${(props) =>
+    props.isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-8px)'};
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
@@ -407,8 +411,6 @@ const CommentList: React.FC<CommentListProps> = ({
       loadComments();
     }
   }, [isVisible, loaded]);
-
-
 
   const loadComments = async () => {
     setLoading(true);
@@ -555,12 +557,12 @@ const CommentList: React.FC<CommentListProps> = ({
                         <CommentDate>
                           {formatDate(comment.createdAt, i18n.language)}
                         </CommentDate>
-                        {comment.updatedAt &&
+                        {/* {comment.updatedAt &&
                           comment.updatedAt !== comment.createdAt && (
                             <UpdatedIndicator>
                               · {t('comments.edit')}
                             </UpdatedIndicator>
-                          )}
+                          )} */}
                       </CommentHeader>
 
                       {editingCommentId === comment.id ? (
@@ -577,7 +579,9 @@ const CommentList: React.FC<CommentListProps> = ({
                         <>
                           <CommentBody
                             className="markdown-body"
-                            dangerouslySetInnerHTML={{ __html: comment.bodyHTML }}
+                            dangerouslySetInnerHTML={{
+                              __html: processLinksInHTML(comment.bodyHTML),
+                            }}
                           />
 
                           {canEditComment(comment) && (
@@ -613,11 +617,7 @@ const CommentList: React.FC<CommentListProps> = ({
         </CommentsContent>
       </CommentsContainer>
 
-      {/* 确认删除对话框 */}
-      <ConfirmOverlay
-        isOpen={!!confirmDeleteId}
-        onClick={cancelDelete}
-      >
+      <ConfirmOverlay isOpen={!!confirmDeleteId} onClick={cancelDelete}>
         <ConfirmDialog
           isOpen={!!confirmDeleteId}
           onClick={(e) => e.stopPropagation()}
@@ -630,7 +630,9 @@ const CommentList: React.FC<CommentListProps> = ({
             </ConfirmButton>
             <ConfirmButton
               variant="danger"
-              onClick={() => confirmDeleteId && handleDeleteComment(confirmDeleteId)}
+              onClick={() =>
+                confirmDeleteId && handleDeleteComment(confirmDeleteId)
+              }
               disabled={isDeleting}
             >
               {isDeleting ? t('comments.deleting') : t('comments.delete')}

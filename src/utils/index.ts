@@ -268,3 +268,16 @@ export const windowOpen = (_url: string) => {
     eventer(messageEvent, (e: any) => handleMessage(e, resolve, reject), false);
   });
 };
+
+export const processLinksInHTML = (html: string) => {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+
+  const links = div.querySelectorAll('a');
+  links.forEach((link) => {
+    link.setAttribute('target', '_blank');
+    link.setAttribute('rel', 'noopener noreferrer');
+  });
+
+  return div.innerHTML;
+};
