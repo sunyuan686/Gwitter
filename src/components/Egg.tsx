@@ -6,13 +6,13 @@ import { useTranslation } from 'react-i18next';
 const Container = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 3rem;
+  margin-top: 3em;
   @media (orientation: landscape) and (max-height: 500px) {
-    margin-top: 0.8rem;
+    margin-top: 0.8em;
 
     .closing-message {
-      padding: 0.8rem;
-      margin: 0.8rem auto;
+      padding: 0.8em;
+      margin: 0.8em auto;
       transform: rotate(-1deg);
     }
 
@@ -21,7 +21,7 @@ const Container = styled.div`
     }
 
     .button-container {
-      margin-top: 0.6rem;
+      margin-top: 0.6em;
     }
   }
 `;
@@ -37,8 +37,8 @@ const BalloonsContainer = styled.div`
 
 const ClosingMessage = styled.div`
   text-align: center;
-  padding: clamp(1.2rem, 3vw, 2rem) clamp(0.8rem, 2vw, 1.5rem);
-  margin: clamp(1.5rem, 4vw, 2.5rem) auto;
+  padding: clamp(1.2em, 3vw, 2em) clamp(0.8em, 2vw, 1.5em);
+  margin: clamp(1.5em, 4vw, 2.5em) auto;
   width: 85%;
   max-width: 600px;
   border-radius: clamp(6px, 1.5vw, 12px);
@@ -98,15 +98,15 @@ const ClosingMessage = styled.div`
 
   @media (max-width: 768px) {
     width: 90%;
-    padding: 1.2rem 0.8rem;
-    margin: 1.2rem auto;
+    padding: 1.2em 0.8em;
+    margin: 1.2em auto;
     transform: rotate(-2deg);
   }
 
   @media (max-width: 480px) {
     width: 95%;
-    padding: 1rem 0.7rem;
-    margin: 0.8rem auto;
+    padding: 1em 0.7em;
+    margin: 0.8em auto;
     border-radius: 8px;
     transform: rotate(-1deg);
   }
@@ -116,9 +116,9 @@ const CodeBlock = styled.div`
   background: #282c34;
   color: #abb2bf;
   border-radius: 8px;
-  padding: clamp(0.6rem, 1.5vw, 1rem);
+  padding: clamp(0.6em, 1.5vw, 1em);
   font-family: monospace;
-  font-size: clamp(0.75rem, 1vw, 0.9rem);
+  font-size: clamp(0.75em, 1vw, 0.9em);
   text-align: left;
   margin: 0 auto;
   width: 100%;
@@ -131,12 +131,12 @@ const CodeBlock = styled.div`
   @media (max-width: 768px) {
     max-width: 100%;
     border-radius: 6px;
-    font-size: 0.8rem;
+    font-size: 0.8em;
   }
 
   @media (max-width: 480px) {
-    font-size: 0.75rem;
-    padding: 0.6rem 0.4rem;
+    font-size: 0.75em;
+    padding: 0.6em 0.4em;
     border-radius: 4px;
     max-height: 250px;
     white-space: pre-wrap;
@@ -150,7 +150,7 @@ const CodeLine = styled.span<{ delay: number }>`
 
   @media (max-width: 480px) {
     line-height: 1.3;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.2em;
   }
 `;
 
@@ -174,21 +174,21 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: clamp(0.4rem, 1.5vw, 0.8rem);
-  margin-top: clamp(0.8rem, 2vw, 1.2rem);
+  gap: clamp(0.4em, 1.5vw, 0.8em);
+  margin-top: clamp(0.8em, 2vw, 1.2em);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   @media (max-width: 480px) {
     flex-direction: column;
     width: 90%;
-    margin: 0.8rem auto 0;
-    gap: 0.4rem;
+    margin: 0.8em auto 0;
+    gap: 0.4em;
   }
 `;
 
 const Button = styled.button`
-  padding: clamp(0.5rem, 1.2vw, 0.7rem) clamp(1.2rem, 2.5vw, 2rem);
-  font-size: clamp(0.7rem, 0.9vw, 0.9rem);
+  padding: clamp(0.5em, 1.2vw, 0.7em) clamp(1.2em, 2.5vw, 2em);
+  font-size: clamp(0.7em, 0.9vw, 0.9em);
   font-weight: 500;
   color: white;
   background-color: #ff5f6d;
@@ -198,7 +198,7 @@ const Button = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(255, 95, 109, 0.4);
-  margin: 0.4rem;
+  margin: 0.4em;
   position: relative;
   overflow: hidden;
 
@@ -243,14 +243,14 @@ const Button = styled.button`
   }
 
   @media (max-width: 768px) {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.85rem;
+    padding: 0.6em 1.5em;
+    font-size: 0.85em;
   }
 
   @media (max-width: 480px) {
     width: 100%;
-    margin: 0.2rem 0;
-    padding: 0.6rem 1rem;
+    margin: 0.2em 0;
+    padding: 0.6em 1em;
     border-radius: 30px;
   }
 `;
