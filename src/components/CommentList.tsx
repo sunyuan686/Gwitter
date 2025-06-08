@@ -131,6 +131,7 @@ const CommentAvatar = styled.img`
 const CommentContent = styled.div`
   flex: 1;
   min-width: 0;
+  position: relative;
 `;
 
 const CommentHeader = styled.div`
@@ -179,45 +180,121 @@ const CommentBody = styled.div`
 `;
 
 const CommentActions = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-top: 8px;
+  justify-content: flex-end;
 `;
 
-const ActionButton = styled.button<{ variant?: 'edit' | 'delete' }>`
+const MoreButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: none;
+  justify-content: center;
+  background: transparent;
   border: none;
-  color: #536471;
+  color: transparent;
   cursor: pointer;
   padding: 8px;
-  border-radius: 16px;
+  border-radius: 50%;
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s ease;
-  min-width: 60px;
-  justify-content: center;
+  width: 32px;
+  height: 32px;
+  opacity: 0;
 
   &:hover {
-    ${(props) =>
-      props.variant === 'edit'
-        ? `
-      background: rgba(29, 155, 240, 0.1);
-      color: #1d9bf0;
-    `
-        : props.variant === 'delete'
-          ? `
-      background: rgba(244, 33, 46, 0.1);
-      color: #f4212e;
-    `
-          : `
-      background: #f7f9fa;
-      color: #0f1419;
-    `}
+    background: #f7f9fa;
+    color: #536471;
+    opacity: 1;
   }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+// 更新CommentItem以包含MoreButton的悬停效果
+const CommentItemWithHover = styled(CommentItem)`
+  &:hover {
+    background-color: #f7f9fa;
+    .markdown-body {
+      background-color: #f7f9fa;
+    }
+
+    .more-button {
+      opacity: 1;
+      color: #536471;
+    }
+  }
+`;
+
+const DropdownMenu = styled.div<{ isOpen: boolean }>`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e1e8ed;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  min-width: 120px;
+  opacity: ${(props) => (props.isOpen ? '1' : '0')};
+  visibility: ${(props) => (props.isOpen ? 'visible' : 'hidden')};
+  transform: ${(props) => (props.isOpen ? 'translateY(0)' : 'translateY(-8px)')};
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+`;
+
+const DropdownItem = styled.button<{ variant?: 'edit' | 'delete' }>`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 0;
+
+  &:first-child {
+    border-radius: 12px 12px 0 0;
+  }
+
+  &:last-child {
+    border-radius: 0 0 12px 12px;
+  }
+
+  &:only-child {
+    border-radius: 12px;
+  }
+
+  ${(props) =>
+    props.variant === 'edit'
+      ? `
+    color: #1d9bf0;
+    &:hover {
+      background: rgba(29, 155, 240, 0.1);
+    }
+  `
+      : props.variant === 'delete'
+        ? `
+    color: #f4212e;
+    &:hover {
+      background: rgba(244, 33, 46, 0.1);
+    }
+  `
+        : `
+    color: #0f1419;
+    &:hover {
+      background: #f7f9fa;
+    }
+  `}
 
   svg {
     width: 16px;
@@ -284,12 +361,29 @@ const CommentList: React.FC<CommentListProps> = ({
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isVisible && !loaded) {
       loadComments();
     }
   }, [isVisible, loaded]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openDropdownId) {
+        setOpenDropdownId(null);
+      }
+    };
+
+    if (openDropdownId) {
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [openDropdownId]);
 
   const loadComments = async () => {
     setLoading(true);
@@ -415,7 +509,7 @@ const CommentList: React.FC<CommentListProps> = ({
           <CommentsScrollArea>
             {comments.map((comment) => {
               return (
-                <CommentItem key={comment.id}>
+                <CommentItemWithHover key={comment.id}>
                   <CommentAvatar
                     src={comment.author.avatarUrl}
                     alt={comment.author.login}
@@ -453,30 +547,51 @@ const CommentList: React.FC<CommentListProps> = ({
 
                         {canEditComment(comment) && (
                           <CommentActions>
-                            <ActionButton
-                              variant="edit"
-                              onClick={() => setEditingCommentId(comment.id)}
+                                                        <MoreButton
+                              className="more-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenDropdownId(
+                                  openDropdownId === comment.id ? null : comment.id
+                                );
+                              }}
                             >
                               <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
                               </svg>
-                              {t('comments.edit')}
-                            </ActionButton>
-                            <ActionButton
-                              variant="delete"
-                              onClick={() => handleDeleteComment(comment.id)}
-                            >
-                              <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                              </svg>
-                              {t('comments.delete')}
-                            </ActionButton>
+                            </MoreButton>
+                            <DropdownMenu isOpen={openDropdownId === comment.id}>
+                              <DropdownItem
+                                variant="edit"
+                                onClick={() => {
+                                  setEditingCommentId(comment.id);
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                </svg>
+                                {t('comments.edit')}
+                              </DropdownItem>
+                              <DropdownItem
+                                variant="delete"
+                                onClick={() => {
+                                  handleDeleteComment(comment.id);
+                                  setOpenDropdownId(null);
+                                }}
+                              >
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                </svg>
+                                {t('comments.delete')}
+                              </DropdownItem>
+                            </DropdownMenu>
                           </CommentActions>
                         )}
                       </>
                     )}
                   </CommentContent>
-                </CommentItem>
+                </CommentItemWithHover>
               );
             })}
           </CommentsScrollArea>
