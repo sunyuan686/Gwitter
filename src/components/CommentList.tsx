@@ -185,94 +185,25 @@ const CommentActions = styled.div`
   right: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 `;
 
-const MoreButton = styled.button`
+const ActionButton = styled.button<{ variant?: 'edit' | 'delete' }>`
   display: flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
-  color: transparent;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
-  font-size: 13px;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 12px;
   font-weight: 500;
   transition: all 0.2s ease;
-  width: 32px;
-  height: 32px;
-  opacity: 0;
-
-  &:hover {
-    background: #f7f9fa;
-    color: #536471;
-    opacity: 1;
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-  }
-`;
-
-// 更新CommentItem以包含MoreButton的悬停效果
-const CommentItemWithHover = styled(CommentItem)`
-  &:hover {
-    background-color: #f7f9fa;
-    .markdown-body {
-      background-color: #f7f9fa;
-    }
-
-    .more-button {
-      opacity: 1;
-      color: #536471;
-    }
-  }
-`;
-
-const DropdownMenu = styled.div<{ isOpen: boolean }>`
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #e1e8ed;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  z-index: 1000;
-  min-width: 120px;
-  opacity: ${(props) => (props.isOpen ? '1' : '0')};
-  visibility: ${(props) => (props.isOpen ? 'visible' : 'hidden')};
-  transform: ${(props) => (props.isOpen ? 'translateY(0)' : 'translateY(-8px)')};
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-`;
-
-const DropdownItem = styled.button<{ variant?: 'edit' | 'delete' }>`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  border-radius: 0;
-
-  &:first-child {
-    border-radius: 12px 12px 0 0;
-  }
-
-  &:last-child {
-    border-radius: 0 0 12px 12px;
-  }
-
-  &:only-child {
-    border-radius: 12px;
-  }
+  height: 28px;
+  min-width: 28px;
 
   ${(props) =>
     props.variant === 'edit'
@@ -290,17 +221,33 @@ const DropdownItem = styled.button<{ variant?: 'edit' | 'delete' }>`
     }
   `
         : `
-    color: #0f1419;
+    color: #536471;
     &:hover {
       background: #f7f9fa;
     }
   `}
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 `;
+
+// 更新CommentItem以包含ActionButton的悬停效果
+const CommentItemWithHover = styled(CommentItem)`
+  &:hover {
+    background-color: #f7f9fa;
+    .markdown-body {
+      background-color: #f7f9fa;
+    }
+
+    .comment-actions {
+      opacity: 1;
+    }
+  }
+`;
+
+
 
 const LoadingText = styled.div`
   text-align: center;
@@ -452,7 +399,6 @@ const CommentList: React.FC<CommentListProps> = ({
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -462,21 +408,7 @@ const CommentList: React.FC<CommentListProps> = ({
     }
   }, [isVisible, loaded]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (openDropdownId) {
-        setOpenDropdownId(null);
-      }
-    };
 
-    if (openDropdownId) {
-      document.addEventListener('click', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [openDropdownId]);
 
   const loadComments = async () => {
     setLoading(true);
@@ -578,7 +510,6 @@ const CommentList: React.FC<CommentListProps> = ({
 
   const showDeleteConfirm = (commentId: string) => {
     setConfirmDeleteId(commentId);
-    setOpenDropdownId(null);
   };
 
   const cancelDelete = () => {
@@ -650,43 +581,25 @@ const CommentList: React.FC<CommentListProps> = ({
                           />
 
                           {canEditComment(comment) && (
-                            <CommentActions>
-                              <MoreButton
-                                className="more-button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenDropdownId(
-                                    openDropdownId === comment.id ? null : comment.id
-                                  );
-                                }}
+                            <CommentActions className="comment-actions">
+                              <ActionButton
+                                variant="edit"
+                                onClick={() => setEditingCommentId(comment.id)}
+                                title={t('comments.edit')}
                               >
                                 <svg viewBox="0 0 24 24" fill="currentColor">
-                                  <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
                                 </svg>
-                              </MoreButton>
-                              <DropdownMenu isOpen={openDropdownId === comment.id}>
-                                <DropdownItem
-                                  variant="edit"
-                                  onClick={() => {
-                                    setEditingCommentId(comment.id);
-                                    setOpenDropdownId(null);
-                                  }}
-                                >
-                                  <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                  </svg>
-                                  {t('comments.edit')}
-                                </DropdownItem>
-                                <DropdownItem
-                                  variant="delete"
-                                  onClick={() => showDeleteConfirm(comment.id)}
-                                >
-                                  <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                  </svg>
-                                  {t('comments.delete')}
-                                </DropdownItem>
-                              </DropdownMenu>
+                              </ActionButton>
+                              <ActionButton
+                                variant="delete"
+                                onClick={() => showDeleteConfirm(comment.id)}
+                                title={t('comments.delete')}
+                              >
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                </svg>
+                              </ActionButton>
                             </CommentActions>
                           )}
                         </>
