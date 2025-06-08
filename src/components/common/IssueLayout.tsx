@@ -10,7 +10,7 @@ export const IssueContainer = styled.div`
 
 export const IssueContent = styled.div`
   flex: 1 1;
-  padding: 16px 16px 0px;
+  padding: 16px 20px 0px;
   margin: 6px;
   overflow: auto;
   background: hsla(0, 0%, 100%, 0.8);
@@ -32,10 +32,6 @@ export const IssueContent = styled.div`
   /* box-shadow: 0 0.2em 0.3em 0.1em rgba(200, 200, 200, 0.4); */
   /* transform: translateY(-1px); */
   /* } */
-
-  @media (max-width: 479px) {
-    padding: 0.625em 0.75em;
-  }
 `;
 
 export const IssueHeader = styled.div`
@@ -52,7 +48,8 @@ export const IssueBody = styled.div`
   color: #333;
   &.markdown-body {
     font-size: 1em;
-    letter-spacing: 1px;
+    letter-spacing: 0.2px;
+    word-wrap: break-word;
     /* background-color: transparent !important; */
     ol {
       list-style: decimal !important;
