@@ -349,6 +349,97 @@ const UpdatedIndicator = styled.span`
   margin-left: 4px;
 `;
 
+// 确认删除对话框样式
+const ConfirmOverlay = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: ${(props) => (props.isOpen ? '1' : '0')};
+  visibility: ${(props) => (props.isOpen ? 'visible' : 'hidden')};
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(4px);
+`;
+
+const ConfirmDialog = styled.div<{ isOpen: boolean }>`
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: ${(props) => (props.isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-8px)')};
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+`;
+
+const ConfirmTitle = styled.h3`
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f1419;
+  line-height: 1.3;
+`;
+
+const ConfirmMessage = styled.p`
+  margin: 0 0 20px 0;
+  font-size: 15px;
+  color: #536471;
+  line-height: 1.4;
+`;
+
+const ConfirmButtons = styled.div`
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+`;
+
+const ConfirmButton = styled.button<{ variant?: 'danger' | 'cancel' }>`
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  min-width: 70px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ${(props) =>
+    props.variant === 'danger'
+      ? `
+    background: #f4212e;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: #dc1c2a;
+    }
+
+    &:disabled {
+      background: #f7a1a8;
+      cursor: not-allowed;
+    }
+  `
+      : `
+    background: transparent;
+    color: #0f1419;
+    border: 1px solid #cfd9de;
+
+    &:hover {
+      background: #f7f9fa;
+      border-color: #8b98a5;
+    }
+  `}
+`;
+
 const CommentList: React.FC<CommentListProps> = ({
   issueNumber,
   issueId,
@@ -362,6 +453,8 @@ const CommentList: React.FC<CommentListProps> = ({
   const [loaded, setLoaded] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (isVisible && !loaded) {
@@ -464,10 +557,7 @@ const CommentList: React.FC<CommentListProps> = ({
       return;
     }
 
-    if (!confirm(t('comments.confirmDelete'))) {
-      return;
-    }
-
+    setIsDeleting(true);
     try {
       const authenticatedApi = createAuthenticatedApi(token);
       await deleteComment(authenticatedApi, commentId);
@@ -477,9 +567,22 @@ const CommentList: React.FC<CommentListProps> = ({
         onCommentCountChange?.(newComments.length);
         return newComments;
       });
+
+      setConfirmDeleteId(null);
     } catch (err) {
       console.error('Failed to delete comment:', err);
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const showDeleteConfirm = (commentId: string) => {
+    setConfirmDeleteId(commentId);
+    setOpenDropdownId(null);
+  };
+
+  const cancelDelete = () => {
+    setConfirmDeleteId(null);
   };
 
   const canEditComment = (comment: Comment) => {
@@ -493,111 +596,136 @@ const CommentList: React.FC<CommentListProps> = ({
   };
 
   return (
-    <CommentsContainer isVisible={isVisible}>
-      <CommentsContent isVisible={isVisible}>
-        <CommentInputWrapper isVisible={isVisible}>
-          <CommentInput
-            onSubmit={handleAddComment}
-            placeholder={t('comments.placeholder')}
-            submitText={t('comments.add')}
-          />
-        </CommentInputWrapper>
+    <>
+      <CommentsContainer isVisible={isVisible}>
+        <CommentsContent isVisible={isVisible}>
+          <CommentInputWrapper isVisible={isVisible}>
+            <CommentInput
+              onSubmit={handleAddComment}
+              placeholder={t('comments.placeholder')}
+              submitText={t('comments.add')}
+            />
+          </CommentInputWrapper>
 
-        {loading && <LoadingText>{t('comments.loading')}</LoadingText>}
+          {loading && <LoadingText>{t('comments.loading')}</LoadingText>}
 
-        {!loading && comments.length > 0 && (
-          <CommentsScrollArea>
-            {comments.map((comment) => {
-              return (
-                <CommentItemWithHover key={comment.id}>
-                  <CommentAvatar
-                    src={comment.author.avatarUrl}
-                    alt={comment.author.login}
-                  />
-                  <CommentContent>
-                    <CommentHeader>
-                      <CommentAuthor>{comment.author.login}</CommentAuthor>
-                      <CommentDate>
-                        {formatDate(comment.createdAt, i18n.language)}
-                      </CommentDate>
-                      {comment.updatedAt &&
-                        comment.updatedAt !== comment.createdAt && (
-                          <UpdatedIndicator>
-                            · {t('comments.edit')}
-                          </UpdatedIndicator>
-                        )}
-                    </CommentHeader>
+          {!loading && comments.length > 0 && (
+            <CommentsScrollArea>
+              {comments.map((comment) => {
+                return (
+                  <CommentItemWithHover key={comment.id}>
+                    <CommentAvatar
+                      src={comment.author.avatarUrl}
+                      alt={comment.author.login}
+                    />
+                    <CommentContent>
+                      <CommentHeader>
+                        <CommentAuthor>{comment.author.login}</CommentAuthor>
+                        <CommentDate>
+                          {formatDate(comment.createdAt, i18n.language)}
+                        </CommentDate>
+                        {comment.updatedAt &&
+                          comment.updatedAt !== comment.createdAt && (
+                            <UpdatedIndicator>
+                              · {t('comments.edit')}
+                            </UpdatedIndicator>
+                          )}
+                      </CommentHeader>
 
-                    {editingCommentId === comment.id ? (
-                      <CommentInput
-                        onSubmit={(content) =>
-                          handleUpdateComment(comment.id, content)
-                        }
-                        onCancel={() => setEditingCommentId(null)}
-                        initialValue={getCommentBodyText(comment.bodyHTML)}
-                        submitText={t('comments.save')}
-                        showCancel={true}
-                      />
-                    ) : (
-                      <>
-                        <CommentBody
-                          className="markdown-body"
-                          dangerouslySetInnerHTML={{ __html: comment.bodyHTML }}
+                      {editingCommentId === comment.id ? (
+                        <CommentInput
+                          onSubmit={(content) =>
+                            handleUpdateComment(comment.id, content)
+                          }
+                          onCancel={() => setEditingCommentId(null)}
+                          initialValue={getCommentBodyText(comment.bodyHTML)}
+                          submitText={t('comments.save')}
+                          showCancel={true}
                         />
+                      ) : (
+                        <>
+                          <CommentBody
+                            className="markdown-body"
+                            dangerouslySetInnerHTML={{ __html: comment.bodyHTML }}
+                          />
 
-                        {canEditComment(comment) && (
-                          <CommentActions>
-                                                        <MoreButton
-                              className="more-button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenDropdownId(
-                                  openDropdownId === comment.id ? null : comment.id
-                                );
-                              }}
-                            >
-                              <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                              </svg>
-                            </MoreButton>
-                            <DropdownMenu isOpen={openDropdownId === comment.id}>
-                              <DropdownItem
-                                variant="edit"
-                                onClick={() => {
-                                  setEditingCommentId(comment.id);
-                                  setOpenDropdownId(null);
+                          {canEditComment(comment) && (
+                            <CommentActions>
+                              <MoreButton
+                                className="more-button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenDropdownId(
+                                    openDropdownId === comment.id ? null : comment.id
+                                  );
                                 }}
                               >
                                 <svg viewBox="0 0 24 24" fill="currentColor">
-                                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                  <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
                                 </svg>
-                                {t('comments.edit')}
-                              </DropdownItem>
-                              <DropdownItem
-                                variant="delete"
-                                onClick={() => {
-                                  handleDeleteComment(comment.id);
-                                  setOpenDropdownId(null);
-                                }}
-                              >
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                </svg>
-                                {t('comments.delete')}
-                              </DropdownItem>
-                            </DropdownMenu>
-                          </CommentActions>
-                        )}
-                      </>
-                    )}
-                  </CommentContent>
-                </CommentItemWithHover>
-              );
-            })}
-          </CommentsScrollArea>
-        )}
-      </CommentsContent>
-    </CommentsContainer>
+                              </MoreButton>
+                              <DropdownMenu isOpen={openDropdownId === comment.id}>
+                                <DropdownItem
+                                  variant="edit"
+                                  onClick={() => {
+                                    setEditingCommentId(comment.id);
+                                    setOpenDropdownId(null);
+                                  }}
+                                >
+                                  <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                  </svg>
+                                  {t('comments.edit')}
+                                </DropdownItem>
+                                <DropdownItem
+                                  variant="delete"
+                                  onClick={() => showDeleteConfirm(comment.id)}
+                                >
+                                  <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                  </svg>
+                                  {t('comments.delete')}
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </CommentActions>
+                          )}
+                        </>
+                      )}
+                    </CommentContent>
+                  </CommentItemWithHover>
+                );
+              })}
+            </CommentsScrollArea>
+          )}
+        </CommentsContent>
+      </CommentsContainer>
+
+      {/* 确认删除对话框 */}
+      <ConfirmOverlay
+        isOpen={!!confirmDeleteId}
+        onClick={cancelDelete}
+      >
+        <ConfirmDialog
+          isOpen={!!confirmDeleteId}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ConfirmTitle>{t('comments.confirmDeleteTitle')}</ConfirmTitle>
+          <ConfirmMessage>{t('comments.confirmDeleteMessage')}</ConfirmMessage>
+          <ConfirmButtons>
+            <ConfirmButton variant="cancel" onClick={cancelDelete}>
+              {t('comments.cancel')}
+            </ConfirmButton>
+            <ConfirmButton
+              variant="danger"
+              onClick={() => confirmDeleteId && handleDeleteComment(confirmDeleteId)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? t('comments.deleting') : t('comments.delete')}
+            </ConfirmButton>
+          </ConfirmButtons>
+        </ConfirmDialog>
+      </ConfirmOverlay>
+    </>
   );
 };
 
