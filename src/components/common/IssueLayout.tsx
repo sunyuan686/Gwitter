@@ -50,7 +50,8 @@ export const IssueBody = styled.div`
     font-size: 1em;
     letter-spacing: 0.2px;
     word-wrap: break-word;
-    /* background-color: transparent !important; */
+    background-color: transparent;
+    /* background: hsla(0, 0%, 100%, 0.8); */
     ol {
       list-style: decimal !important;
     }

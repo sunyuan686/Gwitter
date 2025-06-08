@@ -73,7 +73,7 @@ const UserInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  /* background: rgba(255, 255, 255, 0.9); */
   /* padding: 6px 10px; */
   border-radius: 16px;
   /* border: 0.5px solid #e1e8ed; */
@@ -110,7 +110,7 @@ const LoadingContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.9);
+  /* background: rgba(255, 255, 255, 0.9); */
   /* padding: 6px 10px; */
   border-radius: 16px;
   /* border: 0.5px solid #e1e8ed; */
