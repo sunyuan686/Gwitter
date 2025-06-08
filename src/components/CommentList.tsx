@@ -144,10 +144,11 @@ const CommentHeader = styled.div`
   margin-bottom: 4px;
 `;
 
-const CommentAuthor = styled.span`
+const CommentAuthor = styled.a`
   font-weight: 700;
   color: #132850;
   font-size: 15px;
+  text-decoration: none;
 
   &:hover {
     text-decoration: underline;
@@ -553,7 +554,13 @@ const CommentList: React.FC<CommentListProps> = ({
                     />
                     <CommentContent>
                       <CommentHeader>
-                        <CommentAuthor>{comment.author.login}</CommentAuthor>
+                        <CommentAuthor
+                          href={`https://github.com/${comment.author.login}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {comment.author.login}
+                        </CommentAuthor>
                         <CommentDate>
                           {formatDate(comment.createdAt, i18n.language)}
                         </CommentDate>
