@@ -318,7 +318,7 @@ const ConfirmDialog = styled.div<{ isOpen: boolean }>`
   background: white;
   border-radius: 16px;
   padding: 24px;
-  max-width: 320px;
+  max-width: 360px;
   width: 90%;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   transform: ${(props) => (props.isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-8px)')};
