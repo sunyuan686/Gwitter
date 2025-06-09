@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import config from '../config';
 import { useAuth } from '../hooks/useAuth';
@@ -310,7 +311,7 @@ const ConfirmOverlay = styled.div<{ isOpen: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 9999;
   opacity: ${(props) => (props.isOpen ? '1' : '0')};
   visibility: ${(props) => (props.isOpen ? 'visible' : 'hidden')};
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -329,6 +330,7 @@ const ConfirmDialog = styled.div<{ isOpen: boolean }>`
   transform: ${(props) =>
     props.isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-8px)'};
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 `;
 
 const ConfirmTitle = styled.h3`
@@ -414,6 +416,23 @@ const CommentList: React.FC<CommentListProps> = ({
       loadComments();
     }
   }, [isVisible, loaded]);
+
+  // 监听滚动事件，滚动时取消删除确认
+  useEffect(() => {
+    if (confirmDeleteId) {
+      const handleScroll = () => {
+        setConfirmDeleteId(null);
+      };
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      document.addEventListener('scroll', handleScroll, { passive: true });
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        document.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [confirmDeleteId]);
 
   const loadComments = async () => {
     setLoading(true);
@@ -628,29 +647,33 @@ const CommentList: React.FC<CommentListProps> = ({
         </CommentsContent>
       </CommentsContainer>
 
-      <ConfirmOverlay isOpen={!!confirmDeleteId} onClick={cancelDelete}>
-        <ConfirmDialog
-          isOpen={!!confirmDeleteId}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <ConfirmTitle>{t('comments.confirmDeleteTitle')}</ConfirmTitle>
-          <ConfirmMessage>{t('comments.confirmDeleteMessage')}</ConfirmMessage>
-          <ConfirmButtons>
-            <ConfirmButton variant="cancel" onClick={cancelDelete}>
-              {t('comments.cancel')}
-            </ConfirmButton>
-            <ConfirmButton
-              variant="danger"
-              onClick={() =>
-                confirmDeleteId && handleDeleteComment(confirmDeleteId)
-              }
-              disabled={isDeleting}
+{confirmDeleteId &&
+        createPortal(
+          <ConfirmOverlay isOpen={!!confirmDeleteId} onClick={cancelDelete}>
+            <ConfirmDialog
+              isOpen={!!confirmDeleteId}
+              onClick={(e) => e.stopPropagation()}
             >
-              {isDeleting ? t('comments.deleting') : t('comments.delete')}
-            </ConfirmButton>
-          </ConfirmButtons>
-        </ConfirmDialog>
-      </ConfirmOverlay>
+              <ConfirmTitle>{t('comments.confirmDeleteTitle')}</ConfirmTitle>
+              <ConfirmMessage>{t('comments.confirmDeleteMessage')}</ConfirmMessage>
+              <ConfirmButtons>
+                <ConfirmButton variant="cancel" onClick={cancelDelete}>
+                  {t('comments.cancel')}
+                </ConfirmButton>
+                <ConfirmButton
+                  variant="danger"
+                  onClick={() =>
+                    confirmDeleteId && handleDeleteComment(confirmDeleteId)
+                  }
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? t('comments.deleting') : t('comments.delete')}
+                </ConfirmButton>
+              </ConfirmButtons>
+            </ConfirmDialog>
+          </ConfirmOverlay>,
+          document.body,
+        )}
     </>
   );
 };
