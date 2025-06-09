@@ -11,7 +11,6 @@ export const Spotlight = ({
   className,
   size = 720,
   springOptions = { bounce: 0 },
-  ...props
 }: React.PropsWithChildren<SpotlightProps>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -78,10 +77,11 @@ export const Spotlight = ({
     pointerEvents: 'none',
     borderRadius: '9999px',
     backgroundImage:
-      'radial-gradient(circle at center, rgba(244, 244, 245, 0.8), rgba(244, 244, 245, 0.5), rgba(228, 228, 231, 0.2), transparent 80%)',
-    filter: 'blur(1rem)',
-    opacity: isHovered ? 1 : 0,
-    transition: 'opacity 0.2s ease-in-out',
+      'radial-gradient(circle at center, rgba(255, 255, 255, 0.95), rgba(244, 244, 245, 0.8), rgba(228, 228, 231, 0.4), rgba(200, 200, 200, 0.1), transparent 70%)',
+    filter: 'blur(0.5em)',
+    // backgroundColor: 'rgba(244, 244, 245, 0.8)',
+    opacity: isHovered ? 0.9 : 0,
+    transition: 'opacity 0.15s ease-in-out',
   };
 
   return (
@@ -91,7 +91,6 @@ export const Spotlight = ({
       style={{
         ...spotlightStyle,
         left: spotlightLeft,
-        // @ts-ignore
         top: spotlightTop,
       }}
     />

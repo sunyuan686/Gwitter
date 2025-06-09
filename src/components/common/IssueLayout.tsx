@@ -21,6 +21,7 @@ export const IssueContent = styled.div`
   position: relative;
   overflow: hidden;
   font-size: 15px;
+  z-index: 2;
 
   /* border: 1px solid rgb(212, 212, 216); */
   /* box-shadow:
