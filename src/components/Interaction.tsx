@@ -532,6 +532,7 @@ const Interaction: React.FC<InteractionProps> = ({
         issueNumber={id}
         issueId={issueId}
         isVisible={showComments}
+        commentCount={commentCount}
         onCommentCountChange={setCommentCount}
       />
     </Container>

@@ -29,6 +29,7 @@ interface CommentListProps {
   issueNumber: number;
   issueId: string;
   isVisible: boolean;
+  commentCount: number;
   onCommentCountChange?: (count: number) => void;
 }
 
@@ -396,6 +397,7 @@ const CommentList: React.FC<CommentListProps> = ({
   issueNumber,
   issueId,
   isVisible,
+  commentCount,
   onCommentCountChange,
 }) => {
   const { t, i18n } = useTranslation();
@@ -541,7 +543,9 @@ const CommentList: React.FC<CommentListProps> = ({
             />
           </CommentInputWrapper>
 
-          {loading && <LoadingText>{t('comments.loading')}</LoadingText>}
+          {loading && commentCount > 0 && (
+            <LoadingText>{t('comments.loading')}</LoadingText>
+          )}
 
           {!loading && comments.length > 0 && (
             <CommentsScrollArea>
