@@ -40,7 +40,7 @@
     "loginToComment": "登录后评论"
   },
   "comments": {
-    "adding": "添加中...",
+    "adding": "评论中...",
     "saving": "保存中...",
     "loading": "加载评论中...",
     "empty": "暂无评论",

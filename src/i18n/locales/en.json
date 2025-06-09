@@ -40,11 +40,11 @@
     "loginToComment": "Login to comment"
   },
   "comments": {
-    "adding": "Adding...",
+    "adding": "Commenting...",
     "saving": "Saving...",
     "loading": "Loading comments...",
     "empty": "No comments yet",
-    "add": "Add Comment",
+    "add": "Comment",
     "edit": "Edit",
     "delete": "Delete",
     "cancel": "Cancel",
