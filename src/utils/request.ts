@@ -11,7 +11,7 @@ export const createAuthenticatedApi = (token: string) => {
   });
 };
 
-export const api = createAuthenticatedApi(config.token.join(''));
+export const api = createAuthenticatedApi(config.request.token.join(''));
 
 interface GetIssuesQLParams {
   owner: string;
@@ -24,7 +24,7 @@ export const getIssuesQL = (vars: GetIssuesQLParams) => {
   const ql = `
   query getIssues($owner: String!, $repo: String!, $cursor: String, $pageSize: Int!) {
     repository(owner: $owner, name: $repo) {
-      issues(first: $pageSize, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}, filterBy: {${config.onlyShowOwner ? 'createdBy: $owner,' : ''} states: OPEN}) {
+      issues(first: $pageSize, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}, filterBy: {${config.app.onlyShowOwner ? 'createdBy: $owner,' : ''} states: OPEN}) {
         pageInfo {
           hasNextPage
           endCursor
@@ -271,9 +271,9 @@ export const getUserInfo = async (token: string) => {
 };
 
 export const getAccessToken = async (code: string) => {
-  const response = await axios.post(config.autoProxy, {
-    client_id: config.clientID,
-    client_secret: config.clientSecret,
+  const response = await axios.post(config.request.autoProxy, {
+    client_id: config.request.clientID,
+    client_secret: config.request.clientSecret,
     code,
   });
   return response.data;

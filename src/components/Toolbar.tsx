@@ -192,7 +192,7 @@ const Toolbar = ({
   const { t } = useTranslation();
   const { isAuthenticated, user, login, logout, isLoading } = useAuth();
 
-  const defaultRepo = `${config.owner}/${config.repo}`;
+  const defaultRepo = `${config.request.owner}/${config.request.repo}`;
 
   const [repoInput, setRepoInput] = useState(
     currentRepo ? `${currentRepo.owner}/${currentRepo.repo}` : defaultRepo,
@@ -285,14 +285,14 @@ const Toolbar = ({
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
             placeholder={t('toolbar.repoPlaceholder')}
-            disabled={!config.enableRepoSwitcher}
+            disabled={!config.app.enableRepoSwitcher}
             style={{
               borderColor: error || validationError ? '#ff6b6b' : '#e1e8ed',
-              opacity: !config.enableRepoSwitcher ? 0.6 : 1,
-              cursor: !config.enableRepoSwitcher ? 'not-allowed' : 'text',
+              opacity: !config.app.enableRepoSwitcher ? 0.6 : 1,
+              cursor: !config.app.enableRepoSwitcher ? 'not-allowed' : 'text',
             }}
           />
-          {config.enableRepoSwitcher && (
+          {config.app.enableRepoSwitcher && (
             <ApplyButton
               onClick={handleApplyRepo}
               disabled={!isValidRepo(repoInput) || repoLoading}

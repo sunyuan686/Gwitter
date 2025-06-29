@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = () => {
     const githubOauthUrl = 'https://github.com/login/oauth/authorize';
     const query = {
-      client_id: config.clientID,
+      client_id: config.request.clientID,
       redirect_uri: window.location.href,
       scope: 'public_repo',
     };

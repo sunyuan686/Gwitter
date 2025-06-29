@@ -58,7 +58,7 @@ const App = () => {
   const [currentRepo, setCurrentRepo] = useState(() => {
     // 优先从缓存加载上次选择的 repo
     const lastRepo = loadLastRepo();
-    return lastRepo || { owner: config.owner, repo: config.repo };
+    return lastRepo || { owner: config.request.owner, repo: config.request.repo };
   });
   const [repoError, setRepoError] = useState<string | null>(null);
 
@@ -104,7 +104,7 @@ const App = () => {
           owner: repo.owner,
           repo: repo.repo,
           cursor: cursorRef.current,
-          pageSize: config.pageSize,
+          pageSize: config.request.pageSize,
         }),
       );
       const data = res.data.data.repository.issues;
@@ -149,7 +149,7 @@ const App = () => {
           owner: currentRepo.owner,
           repo: currentRepo.repo,
           cursor: null,
-          pageSize: config.pageSize,
+          pageSize: config.request.pageSize,
         }),
       );
 
@@ -344,7 +344,7 @@ const App = () => {
         isLoading={isRepoLoading}
         error={repoError}
       />
-      {config.enableAbout && (
+      {config.app.enableAbout && (
         <About owner={currentRepo.owner} repo={currentRepo.repo} />
       )}
       {issues.length > 0 && (
@@ -382,7 +382,7 @@ const App = () => {
           </ErrorContainer>
         </IssuesContainer>
       )}
-      {config.enableEgg && !hasNextPage && !repoError && <Egg />}
+      {config.app.enableEgg && !hasNextPage && !repoError && <Egg />}
     </Container>
   );
 };

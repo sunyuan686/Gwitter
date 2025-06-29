@@ -400,8 +400,8 @@ const CommentList: React.FC<CommentListProps> = ({
   isVisible,
   commentCount,
   onCommentCountChange,
-  repoOwner = config.owner,
-  repoName = config.repo,
+  repoOwner = config.request.owner,
+  repoName = config.request.repo,
 }) => {
   const { t, i18n } = useTranslation();
   const { isAuthenticated, user, token } = useAuth();
