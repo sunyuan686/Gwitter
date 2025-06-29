@@ -10,13 +10,13 @@ let config = {
     pageSize: 6,
     autoProxy:
       'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
-    owner: 'ruanyf',
-    repo: 'weekly',
+    owner: 'SimonAKing',
+    repo: 'weibo',
   },
 
   app: {
     onlyShowOwner: false,
-    enableRepoSwitcher: false,
+    enableRepoSwitcher: true,
     enableAbout: false,
     enableEgg: false,
   },
