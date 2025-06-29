@@ -93,6 +93,26 @@ const GitHubIcon = styled.svg`
   fill: currentColor;
 `;
 
+const IssueTitle = styled.div`
+  margin: 0.5em 0 0.5em 0;
+  font-size: 0.9em;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #6b7280;
+  word-wrap: break-word;
+  word-break: break-word;
+  background: #f8fafc;
+  padding: 0.4em 0.6em;
+  border-radius: 4px;
+  border-left: 3px solid #e5e7eb;
+
+  @media (max-width: 479px) {
+    font-size: 0.85em;
+    margin: 0.4em 0 0.2em 0;
+    padding: 0.3em 0.5em;
+  }
+`;
+
 const Issue = ({ issue }: { issue: ProcessedIssue }) => {
   const { i18n } = useTranslation();
   const windowOpen = (url: string) => {
@@ -139,6 +159,7 @@ const Issue = ({ issue }: { issue: ProcessedIssue }) => {
             />
           )}
         </IssueHeader>
+        <IssueTitle>{issue.title}</IssueTitle>
         <IssueBody
           className="markdown-body"
           dangerouslySetInnerHTML={{
