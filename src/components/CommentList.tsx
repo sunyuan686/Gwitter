@@ -63,7 +63,7 @@ const CommentsContent = styled.div<{ isVisible: boolean }>`
     transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
       ${(props) => (props.isVisible ? '0.1s' : '0s')};
   will-change: opacity, transform;
-  padding: 16px 0;
+  padding: 16px 0 0;
   contain: layout style;
 `;
 
@@ -71,16 +71,13 @@ const CommentsScrollArea = styled.div`
   max-height: calc(85vh - 220px);
   overflow-y: auto;
   padding-right: 4px;
-  /* padding-bottom: 12px; */
 
   @media (max-width: 768px) {
     max-height: calc(75vh - 200px);
-    padding-bottom: 10px;
   }
 
   @media (max-width: 479px) {
     max-height: calc(65vh - 180px);
-    padding-bottom: 8px;
   }
 
   &::-webkit-scrollbar {
