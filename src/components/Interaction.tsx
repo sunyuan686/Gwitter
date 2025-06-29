@@ -112,7 +112,7 @@ interface InteractionProps {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
+  /* margin-top: 10px; */
 `;
 
 const ButtonsContainer = styled.div`
