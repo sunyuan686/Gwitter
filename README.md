@@ -10,10 +10,15 @@
 
 ## ✨ Project Introduction
 
-> **Origin of the Project Name** 💡
-> GitHub Issues is (almost) the best note-taking app 📝
-> Twitter is the world's largest microblogging platform 🐦
-> So Gwitter comes from this!
+> ✨ **The Story Behind "Gwitter"**
+>
+> Ever wondered what happens when you combine the world's most powerful issue tracker with the globe's favorite microblogging platform? 🤔
+>
+> **GitHub Issues** 📝 = The unsung hero of note-taking (seriously, it's brilliant!)
+
+> **Twitter** 🐦 = Where thoughts become conversations worldwide
+
+> **Gwitter** 🚀 = Turn GitHub Issues into your personal microblog platform!
 
 ![preview](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGwyY3F1anhjbDIwMDFoYW9sMGZqdGN2bnJpamM2bXQ5M3E5ZTY5NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/J43gtVHbTeNHMIepID/giphy.gif)
 > **📱 Author's Gwitter**: [https://simonaking.com/blog/weibo/](https://simonaking.com/blog/weibo/) - See how Gwitter is used in practice
@@ -23,23 +28,54 @@ Gwitter is a lightweight microblogging application built on GitHub Issues. It re
 ## 🚀 Key Features
 
 1. 📝 GitHub Issues Based
-   Utilizes GitHub Issues as content storage, supporting GitHub's label system for content categorization
-
+  - Utilizes GitHub Issues as content storage, supporting GitHub's label system for content categorization
 2. 👍 Social Interaction
-   - **Like Feature**: Supports GitHub Reactions (👍 ❤️ 😄 😮 😢 😡 🚀 👀)
-   - **Comment System**: Complete commenting functionality with nested replies support
-
+   - Like Feature: Supports GitHub Reactions (👍 ❤️ 😄 😮 😢 😡 🚀 👀)
+   - Comment System: Complete commenting functionality with nested replies support
 3. ✨ Visual Experience
-   - **Beautiful Animations**: Smooth page animations using Framer Motion
-   - **Responsive Design**: Perfect adaptation for desktop, tablet, and mobile devices
-   - **Skeleton Screen**: Elegant loading state display
-
+   - Beautiful Animations: Smooth page animations using Framer Motion
+   - Responsive Design: Perfect adaptation for desktop, tablet, and mobile devices
+   - Skeleton Screen: Elegant loading state display
 4. 🌐 User Experience
-   - **Internationalization Support**: Built-in Chinese and English bilingual support
-   - **Infinite Scroll**: Smart pagination loading for smooth browsing experience
-
+   - Internationalization Support**: Built-in Chinese and English bilingual support
+   - Infinite Scroll: Smart pagination loading for smooth browsing experience
 5. 🤖 Automated Synchronization
-   - **Multi-platform Sync**: Automatically sync newly published Issues to other platforms via GitHub Actions
+   - Multi-platform Sync: Automatically sync newly published Issues to other platforms via GitHub Actions
+
+## 📝 Usage Instructions
+
+### Publishing Content
+
+1. Create a new Issue in the configured GitHub repository
+2. Write content using Markdown format
+3. Add appropriate labels for categorization
+4. Content will automatically sync to the gwitter application after publishing
+<img src="./assets/issue.png" alt="Create issue example" width="500">
+
+### Content Management
+
+- **Edit**: Edit directly in GitHub Issues
+- **Delete**: Close the corresponding Issue
+- **Categorize**: Use GitHub Labels for content categorization
+- **Pin**: Control display order through Issue creation sequence
+
+### 🤖 Automated Synchronization Configuration
+
+Gwitter supports automatically syncing newly published Issues to Telegram and GitHub Gist via GitHub Actions.
+
+#### Setting up Sync Features
+
+1. **Create Sync Script**
+   - Refer to [sync.js](https://github.com/SimonAKing/weibo/blob/master/sync.js) implementation
+   - Create `.github/workflows/sync.yml` in the repository
+
+2. **Configure Environment Variables**
+   In GitHub repository Settings > Secrets and variables
+
+3. **Telegram Configuration**
+   - Create Telegram Bot (via @BotFather)
+   - Get Bot Token and target channel/group Chat ID
+   - Add Bot to target channel and grant admin permissions
 
 ## 🛠️ Tech Stack
 
@@ -151,41 +187,6 @@ pnpm build
 # Preview the build result
 pnpm preview
 ```
-
-## 📝 Usage Instructions
-
-### Publishing Content
-
-1. Create a new Issue in the configured GitHub repository
-2. Write content using Markdown format
-3. Add appropriate labels for categorization
-4. Content will automatically sync to the gwitter application after publishing
-<img src="./assets/issue.png" alt="Create issue example" width="500">
-
-### Content Management
-
-- **Edit**: Edit directly in GitHub Issues
-- **Delete**: Close the corresponding Issue
-- **Categorize**: Use GitHub Labels for content categorization
-- **Pin**: Control display order through Issue creation sequence
-
-### 🤖 Automated Synchronization Configuration
-
-Gwitter supports automatically syncing newly published Issues to Telegram and GitHub Gist via GitHub Actions.
-
-#### Setting up Sync Features
-
-1. **Create Sync Script**
-   - Refer to [sync.js](https://github.com/SimonAKing/weibo/blob/master/sync.js) implementation
-   - Create `.github/workflows/sync.yml` in the repository
-
-2. **Configure Environment Variables**
-   In GitHub repository Settings > Secrets and variables
-
-3. **Telegram Configuration**
-   - Create Telegram Bot (via @BotFather)
-   - Get Bot Token and target channel/group Chat ID
-   - Add Bot to target channel and grant admin permissions
 
 ## 🎨 Customization
 
