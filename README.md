@@ -37,7 +37,7 @@ Gwitter is a lightweight microblogging application built on GitHub Issues. It re
    - Responsive Design: Perfect adaptation for desktop, tablet, and mobile devices
    - Skeleton Screen: Elegant loading state display
 4. 🌐 User Experience
-   - Internationalization Support**: Built-in Chinese and English bilingual support
+   - Internationalization Support: Built-in Chinese and English bilingual support
    - Infinite Scroll: Smart pagination loading for smooth browsing experience
 5. 🤖 Automated Synchronization
    - Multi-platform Sync: Automatically sync newly published Issues to other platforms via GitHub Actions
@@ -50,7 +50,7 @@ Gwitter is a lightweight microblogging application built on GitHub Issues. It re
 2. Write content using Markdown format
 3. Add appropriate labels for categorization
 4. Content will automatically sync to the gwitter application after publishing
-<img src="./assets/issue.png" alt="Create issue example" width="500">
+<img src="./docs/issue.png" alt="Create issue example" width="500">
 
 ### Content Management
 
@@ -115,25 +115,25 @@ pnpm install
 1. Create a new repository on GitHub to store your microblog content
 2. Record the repository's `owner` (username) and `repo` (repository name)
 > Similar to https://github.com/SimonAKing/weibo/issues
-<img src="./assets/repo.png" alt="GitHub repository example" width="500">
+<img src="./docs/repo.png" alt="GitHub repository example" width="500">
 
 #### 3.2 Apply for GitHub Personal Access Token
 
 1. Visit [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
 2. Click "Generate new token (classic)"
-<img src="./assets/token.png" alt="Generate new token" width="500">
+<img src="./docs/token.png" alt="Generate new token" width="500">
 
 3. Select the following permissions:
    - `repo` (Full repository access)
    - `read:user` (Read user information)
 4. Generate and save the token
-<img src="./assets/token_premission.png" alt="Token permissions" width="500">
+<img src="./docs/token_premission.png" alt="Token permissions" width="500">
 
 #### 3.3 Create GitHub OAuth Application
 
 1. Visit [GitHub Settings > Developer settings > OAuth Apps](https://github.com/settings/developers)
 2. Click "New OAuth App"
-<img src="./assets/oauth.png" alt="OAuth Apps" width="500">
+<img src="./docs/oauth.png" alt="OAuth Apps" width="500">
 
 3. Fill in development and production environment application information:
    - **Application name**: Gwitter

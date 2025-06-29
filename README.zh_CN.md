@@ -105,25 +105,25 @@ pnpm install
 1. 在 GitHub 上创建一个新的仓库用于存储你的 Gwitter 内容
 2. 记录仓库的 `owner`（用户名）和 `repo`（仓库名）
 > 类似于 https://github.com/SimonAKing/weibo/issues
-<img src="./assets/repo.png" alt="GitHub 仓库示例" width="500">
+<img src="./docs/repo.png" alt="GitHub 仓库示例" width="500">
 
 #### 3.2 申请 GitHub Personal Access Token
 
 1. 访问 [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
 2. 点击 "Generate new token (classic)"
-<img src="./assets/token.png" alt="生成新 token" width="500">
+<img src="./docs/token.png" alt="生成新 token" width="500">
 
 3. 选择以下权限：
    - `repo` (完整仓库访问权限)
    - `read:user` (读取用户信息)
 4. 生成并保存 token
-<img src="./assets/token_premission.png" alt="Token 权限设置" width="500">
+<img src="./docs/token_premission.png" alt="Token 权限设置" width="500">
 
 #### 3.3 创建 GitHub OAuth 应用
 
 1. 访问 [GitHub Settings > Developer settings > OAuth Apps](https://github.com/settings/developers)
 2. 点击 "New OAuth App"
-<img src="./assets/oauth.png" alt="OAuth 应用" width="500">
+<img src="./docs/oauth.png" alt="OAuth 应用" width="500">
 
 3. 填写调试以及生产环境的应用信息：
    - **Application name**: Gwitter
@@ -186,7 +186,7 @@ pnpm preview
 2. 使用 Markdown 格式编写内容
 3. 添加合适的标签进行分类
 4. 发布后内容会自动同步到 Gwitter 应用
-<img src="./assets/issue.png" alt="创建 Issue 示例" width="500">
+<img src="./docs/issue.png" alt="创建 Issue 示例" width="500">
 
 ## 🎨 定制化
 
