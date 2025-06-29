@@ -83,6 +83,13 @@ export interface RawIssue {
   number: number;
   createdAt: string;
   bodyHTML: string;
+  title: string;
+  url: string;
+  author: {
+    login: string;
+    avatarUrl: string;
+    url: string;
+  };
   reactions: {
     totalCount: number;
     nodes: Reaction[];
@@ -100,6 +107,13 @@ export interface ProcessedIssue {
   number: number;
   createdAt: string;
   bodyHTML: string;
+  title: string;
+  url: string;
+  author: {
+    login: string;
+    avatarUrl: string;
+    url: string;
+  };
   reactions: {
     totalCount: number;
     userReacted: boolean;
@@ -124,7 +138,7 @@ export const transformIssues = (
   currentUser?: string,
 ): ProcessedIssue[] => {
   return rawIssues.map(
-    ({ id, number, createdAt, bodyHTML, reactions, comments, labels }) => {
+    ({ id, number, createdAt, bodyHTML, title, url, author, reactions, comments, labels }) => {
       const heartReactions = reactions.nodes.filter(
         (reaction) => reaction.content === 'HEART',
       );
@@ -138,6 +152,9 @@ export const transformIssues = (
         number,
         createdAt,
         bodyHTML,
+        title,
+        url,
+        author,
         reactions: {
           totalCount: reactions.totalCount,
           userReacted,

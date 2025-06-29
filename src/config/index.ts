@@ -2,8 +2,8 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const config = {
   token: ['9c48ed2297d7d9bf9447', '6de723dbf1a6e4adeacd'],
-  owner: 'SimonAKing',
-  repo: 'Gwitter',
+  owner: 'ruanyf',
+  repo: 'weekly',
   pageSize: 6,
   offsetTop: 1,
   avatar: 'https://cdn.jsdelivr.net/gh/SimonAKing/images/blog/avatar.jpg',

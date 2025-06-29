@@ -24,7 +24,7 @@ export const getIssuesQL = (vars: GetIssuesQLParams) => {
   const ql = `
   query getIssues($owner: String!, $repo: String!, $cursor: String, $pageSize: Int!) {
     repository(owner: $owner, name: $repo) {
-      issues(first: $pageSize, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}, filterBy: {createdBy: $owner, states: OPEN}) {
+      issues(first: $pageSize, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}, filterBy: {states: OPEN}) {
         pageInfo {
           hasNextPage
           endCursor
@@ -34,6 +34,13 @@ export const getIssuesQL = (vars: GetIssuesQLParams) => {
           number
           createdAt
           bodyHTML
+          title
+          url
+          author {
+            login
+            avatarUrl
+            url
+          }
           reactions(first: 100) {
             totalCount
             nodes {
