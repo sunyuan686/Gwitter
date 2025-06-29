@@ -1,6 +1,6 @@
 const isDev = process.env.NODE_ENV === 'development';
 
-const config = {
+let config = {
   request: {
     token: ['9c48ed2297d7d9bf9447', '6de723dbf1a6e4adeacd'],
     clientID: isDev ? '56af6ab05592f0a2d399' : '694df1779e48d5a450d3',
@@ -21,5 +21,12 @@ const config = {
     enableEgg: false,
   },
 };
+
+if ((window as any).GWITTER_CONFIG) {
+  config = {
+    ...config,
+    ...(window as any).GWITTER_CONFIG,
+  };
+}
 
 export default config;
