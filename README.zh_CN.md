@@ -235,6 +235,23 @@ const config = {
    }
    ```
 
+### 构建配置 (`rsbuild.config.mjs`)
+
+| 选项 | 类型 | 说明 | 使用场景 |
+|------|------|------|----------|
+| `output.assetPrefix` | `string` | 静态资源前缀路径 | **部署配置**：设置 CDN 地址或子目录路径。示例：`'https://cdn.example.com/'`，`'/Gwitter/'` |
+
+**配置示例：**
+```javascript
+export default defineConfig({
+  output: {
+    assetPrefix: process.env.NODE_ENV === 'production'
+      ? 'https://your-domain.com/Gwitter/'
+      : '/',
+  },
+});
+```
+
 ### 4. 启动开发服务器
 
 ```bash
@@ -243,7 +260,20 @@ pnpm dev
 
 访问 [http://localhost:3000](http://localhost:3000) 查看应用。
 
-### 5. 构建部署
+### 5. 配置资源前缀（可选）
+
+当部署到子目录或 CDN 时，修改 `rsbuild.config.mjs`：
+
+```javascript
+export default defineConfig({
+  // ... 其他配置
+  output: {
+    assetPrefix: 'https://your-domain.com/Gwitter/', // 或使用相对路径 '/Gwitter/'
+  },
+});
+```
+
+### 6. 构建部署
 
 ```bash
 # 构建生产版本

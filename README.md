@@ -245,6 +245,23 @@ You can override any configuration at runtime by defining `window.GWITTER_CONFIG
    }
    ```
 
+### Build Configuration (`rsbuild.config.mjs`)
+
+| Option | Type | Description | Usage Scenario |
+|--------|------|-------------|----------------|
+| `output.assetPrefix` | `string` | Static asset prefix path | **Deployment**: Set CDN URL or subdirectory path. Examples: `'https://cdn.example.com/'`, `'/Gwitter/'` |
+
+**Example Configuration:**
+```javascript
+export default defineConfig({
+  output: {
+    assetPrefix: process.env.NODE_ENV === 'production'
+      ? 'https://your-domain.com/Gwitter/'
+      : '/',
+  },
+});
+```
+
 ### 4. Start Development Server
 
 ```bash
@@ -253,7 +270,20 @@ pnpm dev
 
 Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
-### 5. Build and Deploy
+### 5. Configure Asset Prefix (Optional)
+
+For deployment to subdirectories or CDN, modify `rsbuild.config.mjs`:
+
+```javascript
+export default defineConfig({
+  // ... other configurations
+  output: {
+    assetPrefix: 'https://your-domain.com/Gwitter/', // or '/Gwitter/' for relative path
+  },
+});
+```
+
+### 6. Build and Deploy
 
 ```bash
 # Build for production
