@@ -32,6 +32,8 @@ interface CommentListProps {
   isVisible: boolean;
   commentCount: number;
   onCommentCountChange?: (count: number) => void;
+  repoOwner?: string;
+  repoName?: string;
 }
 
 const CommentsContainer = styled.div<{ isVisible: boolean }>`
@@ -398,6 +400,8 @@ const CommentList: React.FC<CommentListProps> = ({
   isVisible,
   commentCount,
   onCommentCountChange,
+  repoOwner = config.owner,
+  repoName = config.repo,
 }) => {
   const { t, i18n } = useTranslation();
   const { isAuthenticated, user, token } = useAuth();
@@ -408,11 +412,20 @@ const CommentList: React.FC<CommentListProps> = ({
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // 当 repo 切换时重置状态
+  useEffect(() => {
+    setComments([]);
+    setLoaded(false);
+    setEditingCommentId(null);
+    setConfirmDeleteId(null);
+    setIsDeleting(false);
+  }, [repoOwner, repoName, issueNumber]);
+
   useEffect(() => {
     if (isVisible && !loaded) {
       loadComments();
     }
-  }, [isVisible, loaded]);
+  }, [isVisible, loaded, repoOwner, repoName]);
 
   // 监听滚动事件，滚动时取消删除确认
   useEffect(() => {
@@ -437,8 +450,8 @@ const CommentList: React.FC<CommentListProps> = ({
       const response = await api.post(
         '/graphql',
         getIssueCommentsQL({
-          owner: config.owner,
-          repo: config.repo,
+          owner: repoOwner,
+          repo: repoName,
           issueNumber,
         }),
       );

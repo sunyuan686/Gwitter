@@ -5,6 +5,13 @@
     "logout": "Logout",
     "loading": "Loading..."
   },
+  "toolbar": {
+    "repo": "Repo",
+    "apply": "Apply",
+    "repoPlaceholder": "owner/repo",
+    "invalidRepo": "Please enter a valid repository (owner/repo)",
+    "repoNotFound": "Repository not found or private"
+  },
   "about": {
     "title": "Details & Summary",
     "gwitter": {

@@ -107,6 +107,8 @@ interface InteractionProps {
   comments: {
     totalCount: number;
   };
+  repoOwner?: string;
+  repoName?: string;
 }
 
 const Container = styled.div`
@@ -359,6 +361,8 @@ const Interaction: React.FC<InteractionProps> = ({
   issueId,
   reactions,
   comments,
+  repoOwner,
+  repoName,
 }) => {
   const { t } = useTranslation();
   const { isAuthenticated, token, login } = useAuth();
@@ -534,6 +538,8 @@ const Interaction: React.FC<InteractionProps> = ({
         isVisible={showComments}
         commentCount={commentCount}
         onCommentCountChange={setCommentCount}
+        repoOwner={repoOwner}
+        repoName={repoName}
       />
     </Container>
   );

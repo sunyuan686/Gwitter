@@ -5,6 +5,13 @@
     "logout": "退出",
     "loading": "加载中..."
   },
+  "toolbar": {
+    "repo": "仓库",
+    "apply": "应用",
+    "repoPlaceholder": "用户名/仓库名",
+    "invalidRepo": "请输入有效的仓库地址（用户名/仓库名）",
+    "repoNotFound": "仓库未找到或为私有仓库"
+  },
   "about": {
     "title": "Details & Summary",
     "gwitter": {

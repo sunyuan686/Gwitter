@@ -113,7 +113,11 @@ const IssueTitle = styled.div`
   }
 `;
 
-const Issue = ({ issue }: { issue: ProcessedIssue }) => {
+const Issue = ({ issue, repoOwner, repoName }: {
+  issue: ProcessedIssue;
+  repoOwner?: string;
+  repoName?: string;
+}) => {
   const { i18n } = useTranslation();
   const windowOpen = (url: string) => {
     window.open(url, '_blank');
@@ -173,6 +177,8 @@ const Issue = ({ issue }: { issue: ProcessedIssue }) => {
           comments={{
             totalCount: issue.comments,
           }}
+          repoOwner={repoOwner}
+          repoName={repoName}
         />
       </IssueContent>
     </IssueContainer>
