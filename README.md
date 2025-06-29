@@ -1,6 +1,6 @@
 # Gwitter
 
-[中文版本](README.zh_CN.md.md)
+[中文版本](README.zh_CN.md)
 
 ## 🎮 Playground
 
@@ -10,15 +10,15 @@
 
 ## ✨ Project Introduction
 
-> ✨ **The Story Behind "Gwitter"**
->
-> Ever wondered what happens when you combine the world's most powerful issue tracker with the globe's favorite microblogging platform? 🤔
->
-> **GitHub Issues** 📝 = The unsung hero of note-taking (seriously, it's brilliant!)
+✨ **The Story Behind "Gwitter"**
 
-> **Twitter** 🐦 = Where thoughts become conversations worldwide
+Ever wondered what happens when you combine the world's most powerful issue tracker with the globe's favorite microblogging platform? 🤔
 
-> **Gwitter** 🚀 = Turn GitHub Issues into your personal microblog platform!
+**GitHub Issues** 📝 = The unsung hero of note-taking (seriously, it's brilliant!)
+
+**Twitter** 🐦 = Where thoughts become conversations worldwide
+
+**Gwitter** 🚀 = Turn GitHub Issues into your personal microblog platform!
 
 ![preview](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGwyY3F1anhjbDIwMDFoYW9sMGZqdGN2bnJpamM2bXQ5M3E5ZTY5NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/J43gtVHbTeNHMIepID/giphy.gif)
 > **📱 Author's Gwitter**: [https://simonaking.com/blog/weibo/](https://simonaking.com/blog/weibo/) - See how Gwitter is used in practice
@@ -28,7 +28,7 @@ Gwitter is a lightweight microblogging application built on GitHub Issues. It re
 ## 🚀 Key Features
 
 1. 📝 GitHub Issues Based
-  - Utilizes GitHub Issues as content storage, supporting GitHub's label system for content categorization
+   - Utilizes GitHub Issues as content storage, supporting GitHub's label system for content categorization
 2. 👍 Social Interaction
    - Like Feature: Supports GitHub Reactions (👍 ❤️ 😄 😮 😢 😡 🚀 👀)
    - Comment System: Complete commenting functionality with nested replies support
