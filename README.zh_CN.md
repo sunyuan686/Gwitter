@@ -16,6 +16,7 @@
 > 那么 Gwitter 就是来源于此！
 
 ![preview](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGwyY3F1anhjbDIwMDFoYW9sMGZqdGN2bnJpamM2bXQ5M3E5ZTY5NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/J43gtVHbTeNHMIepID/giphy.gif)
+> **📱 作者的 Gwitter**: [https://simonaking.com/blog/weibo/](https://simonaking.com/blog/weibo/) - 看看 Gwitter 在实际中的应用
 
 Gwitter 是一个基于 GitHub Issues 构建的轻量级微博应用。这里记录着我对技术的思考、对生活的感悟，以及一些有趣的发现，欢迎一起交流探讨。
 
@@ -75,36 +76,34 @@ pnpm install
 
 #### 3.1 创建 GitHub Repository
 
-1. 在 GitHub 上创建一个新的仓库用于存储你的微博内容
+1. 在 GitHub 上创建一个新的仓库用于存储你的 Gwitter 内容
 2. 记录仓库的 `owner`（用户名）和 `repo`（仓库名）
 > 类似于 https://github.com/SimonAKing/weibo/issues
-![issue](./assets/repo.png)
+<img src="./assets/repo.png" alt="GitHub 仓库示例" width="500">
 
 #### 3.2 申请 GitHub Personal Access Token
 
 1. 访问 [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
 2. 点击 "Generate new token (classic)"
-![1](./assets/token.png)
+<img src="./assets/token.png" alt="生成新 token" width="500">
 
 3. 选择以下权限：
    - `repo` (完整仓库访问权限)
    - `read:user` (读取用户信息)
 4. 生成并保存 token
-![1](./assets/token_premission.png)
+<img src="./assets/token_premission.png" alt="Token 权限设置" width="500">
 
 #### 3.3 创建 GitHub OAuth 应用
 
 1. 访问 [GitHub Settings > Developer settings > OAuth Apps](https://github.com/settings/developers)
 2. 点击 "New OAuth App"
-![2](./assets/oauth.png)
+<img src="./assets/oauth.png" alt="OAuth 应用" width="500">
 
 3. 填写调试以及生产环境的应用信息：
    - **Application name**: Gwitter
    - **Homepage URL**: `http://localhost:3000` (开发环境) 或你的部署域名
    - **Authorization callback URL**: `http://localhost:3000` (开发环境) 或你的部署域名
 4. 创建后获得 `Client ID` 和 `Client Secret`
-![2](./assets/oauth_test.png)
-![2](./assets/oauth_prod.png)
 
 #### 3.4 配置应用
 
@@ -160,8 +159,8 @@ pnpm preview
 1. 在配置的 GitHub 仓库中创建新的 Issue
 2. 使用 Markdown 格式编写内容
 3. 添加合适的标签进行分类
-4. 发布后内容会自动同步到微博应用
-![x](./assets/issue.png)
+4. 发布后内容会自动同步到 Gwitter 应用
+<img src="./assets/issue.png" alt="创建 Issue 示例" width="500">
 
 ### 内容管理
 

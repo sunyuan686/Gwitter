@@ -16,6 +16,7 @@
 > So Gwitter comes from this!
 
 ![preview](https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGwyY3F1anhjbDIwMDFoYW9sMGZqdGN2bnJpamM2bXQ5M3E5ZTY5NCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/J43gtVHbTeNHMIepID/giphy.gif)
+> **📱 Author's Gwitter**: [https://simonaking.com/blog/weibo/](https://simonaking.com/blog/weibo/) - See how Gwitter is used in practice
 
 Gwitter is a lightweight microblogging application built on GitHub Issues. It records my thoughts on technology, life insights, and interesting discoveries. Welcome to join the discussion!
 
@@ -78,33 +79,31 @@ pnpm install
 1. Create a new repository on GitHub to store your microblog content
 2. Record the repository's `owner` (username) and `repo` (repository name)
 > Similar to https://github.com/SimonAKing/weibo/issues
-![issue](./assets/repo.png)
+<img src="./assets/repo.png" alt="GitHub repository example" width="500">
 
 #### 3.2 Apply for GitHub Personal Access Token
 
 1. Visit [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
 2. Click "Generate new token (classic)"
-![1](./assets/token.png)
+<img src="./assets/token.png" alt="Generate new token" width="500">
 
 3. Select the following permissions:
    - `repo` (Full repository access)
    - `read:user` (Read user information)
 4. Generate and save the token
-![1](./assets/token_premission.png)
+<img src="./assets/token_premission.png" alt="Token permissions" width="500">
 
 #### 3.3 Create GitHub OAuth Application
 
 1. Visit [GitHub Settings > Developer settings > OAuth Apps](https://github.com/settings/developers)
 2. Click "New OAuth App"
-![2](./assets/oauth.png)
+<img src="./assets/oauth.png" alt="OAuth Apps" width="500">
 
 3. Fill in development and production environment application information:
    - **Application name**: Gwitter
    - **Homepage URL**: `http://localhost:3000` (development) or your deployment domain
    - **Authorization callback URL**: `http://localhost:3000` (development) or your deployment domain
 4. After creation, obtain `Client ID` and `Client Secret`
-![2](./assets/oauth_test.png)
-![2](./assets/oauth_prod.png)
 
 #### 3.4 Configure Application
 
@@ -160,8 +159,8 @@ pnpm preview
 1. Create a new Issue in the configured GitHub repository
 2. Write content using Markdown format
 3. Add appropriate labels for categorization
-4. Content will automatically sync to the microblog application after publishing
-![x](./assets/issue.png)
+4. Content will automatically sync to the gwitter application after publishing
+<img src="./assets/issue.png" alt="Create issue example" width="500">
 
 ### Content Management
 
