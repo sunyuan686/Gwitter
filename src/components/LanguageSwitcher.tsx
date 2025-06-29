@@ -8,9 +8,9 @@ const SwitcherContainer = styled.div`
 `;
 
 const LanguageButton = styled.button<{ isActive: boolean }>`
-  background: ${props => props.isActive ? '#1da1f2' : 'transparent'};
-  color: ${props => props.isActive ? 'white' : '#657786'};
-  border: 1px solid ${props => props.isActive ? '#1da1f2' : '#e1e8ed'};
+  background: ${(props) => (props.isActive ? '#1da1f2' : 'transparent')};
+  color: ${(props) => (props.isActive ? 'white' : '#657786')};
+  border: 1px solid ${(props) => (props.isActive ? '#1da1f2' : '#e1e8ed')};
   padding: 4px 8px;
   border-radius: 12px;
   cursor: pointer;
@@ -20,8 +20,8 @@ const LanguageButton = styled.button<{ isActive: boolean }>`
   min-width: 32px;
 
   &:hover {
-    background: ${props => props.isActive ? '#1991db' : '#f7f9fa'};
-    border-color: ${props => props.isActive ? '#1991db' : '#d1d9e0'};
+    background: ${(props) => (props.isActive ? '#1991db' : '#f7f9fa')};
+    border-color: ${(props) => (props.isActive ? '#1991db' : '#d1d9e0')};
   }
 
   &:active {

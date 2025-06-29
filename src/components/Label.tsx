@@ -8,7 +8,7 @@ interface LabelProps {
 }
 
 const LabelContainer = styled.span<{ bgColor: string }>`
-	display: inline-block;
+  display: inline-block;
   line-height: 1;
   padding: 5px 6px;
   font-size: 0.9em;

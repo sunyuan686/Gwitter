@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface CommentInputProps {
@@ -17,9 +17,11 @@ const InputContainer = styled.div<{ $isExpanded?: boolean }>`
   border-radius: 12px;
   border: 1px solid #e1e8ed;
   padding: 12px;
-  transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease;
+  transition:
+    max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s ease;
   overflow: hidden;
-  max-height: ${props => props.$isExpanded ? '500px' : '80px'};
+  max-height: ${(props) => (props.$isExpanded ? '500px' : '80px')};
   will-change: max-height;
   contain: layout;
 
@@ -30,7 +32,7 @@ const InputContainer = styled.div<{ $isExpanded?: boolean }>`
 
 const TextArea = styled.textarea<{ $isExpanded?: boolean }>`
   width: 100%;
-  min-height: ${props => props.$isExpanded ? '60px' : '40px'};
+  min-height: ${(props) => (props.$isExpanded ? '60px' : '40px')};
   padding: 0;
   border: none;
   font-size: 14px;
@@ -57,9 +59,9 @@ const ButtonContainer = styled.div<{ $isExpanded?: boolean }>`
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid #e1e8ed;
-  opacity: ${props => props.$isExpanded ? 1 : 0};
+  opacity: ${(props) => (props.$isExpanded ? 1 : 0)};
   transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: ${props => props.$isExpanded ? 'auto' : 'none'};
+  pointer-events: ${(props) => (props.$isExpanded ? 'auto' : 'none')};
   will-change: opacity;
 `;
 
@@ -69,7 +71,9 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
   border: none;
   min-width: 70px;
   height: 32px;
@@ -77,7 +81,9 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
   align-items: center;
   justify-content: center;
 
-  ${props => props.variant === 'primary' ? `
+  ${(props) =>
+    props.variant === 'primary'
+      ? `
     background: #1d9bf0;
     color: white;
 
@@ -89,7 +95,8 @@ const Button = styled.button<{ variant?: 'primary' | 'secondary' }>`
       background: #8ecdf8;
       cursor: not-allowed;
     }
-  ` : `
+  `
+      : `
     background: transparent;
     color: #0f1419;
     border: 1px solid #cfd9de;
@@ -174,7 +181,11 @@ const CommentInput: React.FC<CommentInputProps> = ({
           onClick={handleSubmit}
           disabled={!content.trim() || isSubmitting}
         >
-          {isSubmitting ? (showCancel ? t('comments.saving') : t('comments.adding')) : (submitText || t('comments.add'))}
+          {isSubmitting
+            ? showCancel
+              ? t('comments.saving')
+              : t('comments.adding')
+            : submitText || t('comments.add')}
         </Button>
       </ButtonContainer>
     </InputContainer>

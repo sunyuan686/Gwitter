@@ -56,9 +56,10 @@ const App = () => {
   const [rawIssuesData, setRawIssuesData] = useState<any[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentRepo, setCurrentRepo] = useState(() => {
-    // 优先从缓存加载上次选择的 repo
     const lastRepo = loadLastRepo();
-    return lastRepo || { owner: config.request.owner, repo: config.request.repo };
+    return (
+      lastRepo || { owner: config.request.owner, repo: config.request.repo }
+    );
   });
   const [repoError, setRepoError] = useState<string | null>(null);
 

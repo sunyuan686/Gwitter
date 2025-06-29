@@ -657,7 +657,7 @@ const CommentList: React.FC<CommentListProps> = ({
         </CommentsContent>
       </CommentsContainer>
 
-{confirmDeleteId &&
+      {confirmDeleteId &&
         createPortal(
           <ConfirmOverlay isOpen={!!confirmDeleteId} onClick={cancelDelete}>
             <ConfirmDialog
@@ -665,7 +665,9 @@ const CommentList: React.FC<CommentListProps> = ({
               onClick={(e) => e.stopPropagation()}
             >
               <ConfirmTitle>{t('comments.confirmDeleteTitle')}</ConfirmTitle>
-              <ConfirmMessage>{t('comments.confirmDeleteMessage')}</ConfirmMessage>
+              <ConfirmMessage>
+                {t('comments.confirmDeleteMessage')}
+              </ConfirmMessage>
               <ConfirmButtons>
                 <ConfirmButton variant="cancel" onClick={cancelDelete}>
                   {t('comments.cancel')}

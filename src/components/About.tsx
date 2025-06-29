@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import config from '../config';
 import '../lib/collapse.js';
 import { api, getLabelsQL } from '../utils/request';
 import './About.less';

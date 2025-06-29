@@ -113,7 +113,11 @@ const IssueTitle = styled.div`
   }
 `;
 
-const Issue = ({ issue, repoOwner, repoName }: {
+const Issue = ({
+  issue,
+  repoOwner,
+  repoName,
+}: {
   issue: ProcessedIssue;
   repoOwner?: string;
   repoName?: string;

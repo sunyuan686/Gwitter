@@ -138,7 +138,18 @@ export const transformIssues = (
   currentUser?: string,
 ): ProcessedIssue[] => {
   return rawIssues.map(
-    ({ id, number, createdAt, bodyHTML, title, url, author, reactions, comments, labels }) => {
+    ({
+      id,
+      number,
+      createdAt,
+      bodyHTML,
+      title,
+      url,
+      author,
+      reactions,
+      comments,
+      labels,
+    }) => {
       const heartReactions = reactions.nodes.filter(
         (reaction) => reaction.content === 'HEART',
       );
