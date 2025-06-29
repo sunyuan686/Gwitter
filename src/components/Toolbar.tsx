@@ -192,9 +192,6 @@ const Toolbar = ({
   const { t } = useTranslation();
   const { isAuthenticated, user, login, logout, isLoading } = useAuth();
 
-  const toolbarConfig = config.toolbar?.repoSwitcher;
-  const isRepoSwitcherEnabled = toolbarConfig?.enabled ?? true;
-  const showRepoLabel = toolbarConfig?.showLabel ?? true;
   const defaultRepo = `${config.owner}/${config.repo}`;
 
   const [repoInput, setRepoInput] = useState(
@@ -204,7 +201,7 @@ const Toolbar = ({
 
   const isValidRepo = (input: string) => {
     if (!input.trim()) {
-      return toolbarConfig?.allowEmpty ?? false;
+      return false;
     }
     const parts = input.split('/');
     return parts.length === 2 && parts[0].trim() && parts[1].trim();
@@ -281,18 +278,21 @@ const Toolbar = ({
     <ToolbarContainer>
       <LeftSection>
         <LanguageSwitcher />
-        {isRepoSwitcherEnabled && (
-          <RepoInputContainer>
-            {showRepoLabel && <RepoLabel>{t('toolbar.repo')}:</RepoLabel>}
-            <RepoInput
-              value={repoInput}
-              onChange={handleInputChange}
-              onKeyPress={handleKeyPress}
-              placeholder={t('toolbar.repoPlaceholder')}
-              style={{
-                borderColor: error || validationError ? '#ff6b6b' : '#e1e8ed',
-              }}
-            />
+        <RepoInputContainer>
+          <RepoLabel>{t('toolbar.repo')}</RepoLabel>
+          <RepoInput
+            value={repoInput}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            placeholder={t('toolbar.repoPlaceholder')}
+            disabled={!config.enableRepoSwitcher}
+            style={{
+              borderColor: error || validationError ? '#ff6b6b' : '#e1e8ed',
+              opacity: !config.enableRepoSwitcher ? 0.6 : 1,
+              cursor: !config.enableRepoSwitcher ? 'not-allowed' : 'text',
+            }}
+          />
+          {config.enableRepoSwitcher && (
             <ApplyButton
               onClick={handleApplyRepo}
               disabled={!isValidRepo(repoInput) || repoLoading}
@@ -304,8 +304,8 @@ const Toolbar = ({
                 t('toolbar.apply')
               )}
             </ApplyButton>
-          </RepoInputContainer>
-        )}
+          )}
+        </RepoInputContainer>
       </LeftSection>
       <RightSection>{renderAuthSection()}</RightSection>
     </ToolbarContainer>

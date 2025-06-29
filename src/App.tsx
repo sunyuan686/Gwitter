@@ -9,6 +9,7 @@ import config from './config';
 
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ProcessedIssue, transformIssues } from './utils';
+import { loadLastRepo, saveLastRepo } from './utils/cache';
 import { api, getIssuesQL } from './utils/request';
 
 const Container = styled.div`
@@ -54,9 +55,10 @@ const App = () => {
   const [hasNextPage, setHasNextPage] = useState(true);
   const [rawIssuesData, setRawIssuesData] = useState<any[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [currentRepo, setCurrentRepo] = useState({
-    owner: config.owner,
-    repo: config.repo,
+  const [currentRepo, setCurrentRepo] = useState(() => {
+    // 优先从缓存加载上次选择的 repo
+    const lastRepo = loadLastRepo();
+    return lastRepo || { owner: config.owner, repo: config.repo };
   });
   const [repoError, setRepoError] = useState<string | null>(null);
 
@@ -111,12 +113,14 @@ const App = () => {
       setHasNextPage(nextPage);
       cursorRef.current = endCursor;
 
-      setRawIssuesData((prev) => [...prev, ...data.nodes]);
+      const newRawIssuesData = [...rawIssuesData, ...data.nodes];
+      setRawIssuesData(newRawIssuesData);
 
       setIssues((prev) => [
         ...prev,
         ...transformIssues(data.nodes, currentUserRef.current),
       ]);
+
       setIsLoading(false);
       loadMoreTriggeredRef.current = false;
     } catch (err) {
@@ -124,7 +128,7 @@ const App = () => {
       setIsLoading(false);
       loadMoreTriggeredRef.current = false;
     }
-  }, []);
+  }, [rawIssuesData]);
 
   const resetAndLoadNewRepo = useCallback(async () => {
     console.log('Resetting and loading new repo:', currentRepo);
@@ -164,10 +168,9 @@ const App = () => {
 
       setHasNextPage(nextPage);
       cursorRef.current = endCursor;
-
       setRawIssuesData(data.nodes);
-
       setIssues(transformIssues(data.nodes, currentUserRef.current));
+
       setIsLoading(false);
       setIsRepoLoading(false);
       setRepoError(null);
@@ -184,6 +187,7 @@ const App = () => {
   const handleRepoChange = useCallback((owner: string, repo: string) => {
     console.log('Repo changed to:', { owner, repo });
     setCurrentRepo({ owner, repo });
+    saveLastRepo(owner, repo);
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -340,7 +344,9 @@ const App = () => {
         isLoading={isRepoLoading}
         error={repoError}
       />
-      <About />
+      {config.enableAbout && (
+        <About owner={currentRepo.owner} repo={currentRepo.repo} />
+      )}
       {issues.length > 0 && (
         <>
           <IssuesContainer>
@@ -376,7 +382,7 @@ const App = () => {
           </ErrorContainer>
         </IssuesContainer>
       )}
-      {!hasNextPage && !repoError && <Egg />}
+      {config.enableEgg && !hasNextPage && !repoError && <Egg />}
     </Container>
   );
 };

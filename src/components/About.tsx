@@ -13,7 +13,12 @@ interface Label {
   color: string;
 }
 
-const About = () => {
+type AboutProps = {
+  owner: string;
+  repo: string;
+};
+
+const About = ({ owner, repo }: AboutProps) => {
   const [labels, setLabels] = useState<Label[] | null>(null);
   const { t } = useTranslation();
 
@@ -23,7 +28,6 @@ const About = () => {
 
     const fetchLabels = async () => {
       try {
-        const { owner, repo } = config;
         const response = await api.post(
           '/graphql',
           getLabelsQL({ owner, repo }),
@@ -42,7 +46,7 @@ const About = () => {
     };
 
     fetchLabels();
-  }, []);
+  }, [owner, repo]);
 
   return (
     <div className="about-container collapse">
