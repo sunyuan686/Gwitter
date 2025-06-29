@@ -147,28 +147,103 @@ Modify the `src/config/index.ts` file:
 
 ```typescript
 const config = {
-  // GitHub Personal Access Token
-  token: ['your_token_part1', 'your_token_part2'],
+  request: {
+    // GitHub Personal Access Token
+    token: ['your_token_part1', 'your_token_part2'],
 
-  // GitHub repository configuration
-  owner: 'your_github_username',
-  repo: 'your_repo_name',
+    // OAuth configuration
+    clientID: isDev ? 'dev_client_id' : 'prod_client_id',
+    clientSecret: isDev ? 'dev_client_secret' : 'prod_client_secret',
 
-  // Pagination configuration
-  pageSize: 6,
-  offsetTop: 1,
+    // GitHub repository configuration
+    owner: 'your_github_username',
+    repo: 'your_repo_name',
 
-  // User avatar
-  avatar: 'https://github.com/your_username.png',
+    // Pagination configuration
+    pageSize: 6,
 
-  // OAuth configuration
-  clientID: isDev ? 'dev_client_id' : 'prod_client_id',
-  clientSecret: isDev ? 'dev_client_secret' : 'prod_client_secret',
+    // CORS proxy (optional)
+    autoProxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+  },
 
-  // CORS proxy (optional)
-  autoProxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+  app: {
+    // Application feature toggles
+    onlyShowOwner: false,
+    enableRepoSwitcher: false,
+    enableAbout: false,
+    enableEgg: false,
+  },
 };
 ```
+
+## ⚙️ Configuration Options
+
+### Request Configuration (`config.request`)
+
+| Option | Type | Description | Usage Scenario |
+|--------|------|-------------|----------------|
+| `token` | `string[]` | GitHub Personal Access Token split into two parts | **Security**: Split token to avoid exposure in source code. Combine both parts to form complete token |
+| `clientID` | `string` | GitHub OAuth Application Client ID | **Authentication**: Different IDs for development/production environments |
+| `clientSecret` | `string` | GitHub OAuth Application Client Secret | **Authentication**: Different secrets for development/production environments |
+| `owner` | `string` | GitHub repository owner (username) | **Data Source**: Specify which user's repository to use for content |
+| `repo` | `string` | GitHub repository name | **Data Source**: Specify which repository contains the Issues/content |
+| `pageSize` | `number` | Number of issues to load per page | **Performance**: Control loading speed and memory usage. Recommended: 6-12 |
+| `autoProxy` | `string` | CORS proxy URL for OAuth requests | **CORS**: Required for client-side OAuth flow. Use when deploying to static hosting |
+
+### Application Configuration (`config.app`)
+
+| Option | Type | Description | Usage Scenario |
+|--------|------|-------------|----------------|
+| `onlyShowOwner` | `boolean` | Show only repository owner's issues | **Privacy**: Set to `true` for personal blogs, `false` for community discussions |
+| `enableRepoSwitcher` | `boolean` | Enable repository switching functionality | **Multi-repo**: Set to `true` when managing multiple content repositories |
+| `enableAbout` | `boolean` | Show About page/section | **Information**: Display author information and project details |
+| `enableEgg` | `boolean` | Enable easter egg features | **Fun**: Hidden features or interactive elements for user engagement |
+
+### Dynamic Configuration Override
+
+You can override any configuration at runtime by defining `window.GWITTER_CONFIG`:
+
+```html
+<script>
+  window.GWITTER_CONFIG = {
+    app: {
+      enableAbout: true,
+      enableEgg: true,
+    },
+    request: {
+      pageSize: 10,
+    }
+  };
+</script>
+```
+
+### Common Configuration Scenarios
+
+1. **Personal Blog Setup**
+   ```typescript
+   app: {
+     onlyShowOwner: true,    // Show only your content
+     enableAbout: true,      // Display your information
+     enableRepoSwitcher: false, // Single repository
+   }
+   ```
+
+2. **Community Discussion Platform**
+   ```typescript
+   app: {
+     onlyShowOwner: false,   // Show all participants
+     enableRepoSwitcher: true, // Multiple topic repositories
+     enableAbout: false,     // Focus on content
+   }
+   ```
+
+3. **Development Environment**
+   ```typescript
+   request: {
+     pageSize: 3,           // Smaller pages for testing
+     // Use development OAuth credentials
+   }
+   ```
 
 ### 4. Start Development Server
 

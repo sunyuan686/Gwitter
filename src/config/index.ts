@@ -22,11 +22,21 @@ let config = {
   },
 };
 
-if ((window as any).GWITTER_CONFIG) {
-  config = {
-    ...config,
-    ...(window as any).GWITTER_CONFIG,
-  };
+const gConfig = (window as any).GWITTER_CONFIG;
+
+if (gConfig) {
+  if (gConfig.request) {
+    config.request = {
+      ...config.request,
+      ...gConfig.request,
+    };
+  }
+  if (gConfig.app) {
+    config.app = {
+      ...config.app,
+      ...gConfig.app,
+    };
+  }
 }
 
 export default config;

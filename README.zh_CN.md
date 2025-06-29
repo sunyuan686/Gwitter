@@ -137,28 +137,103 @@ pnpm install
 
 ```typescript
 const config = {
-  // GitHub Personal Access Token
-  token: ['your_token_part1', 'your_token_part2'],
+  request: {
+    // GitHub Personal Access Token
+    token: ['your_token_part1', 'your_token_part2'],
 
-  // GitHub 仓库配置
-  owner: 'your_github_username',
-  repo: 'your_repo_name',
+    // OAuth 配置
+    clientID: isDev ? 'dev_client_id' : 'prod_client_id',
+    clientSecret: isDev ? 'dev_client_secret' : 'prod_client_secret',
 
-  // 分页配置
-  pageSize: 6,
-  offsetTop: 1,
+    // GitHub 仓库配置
+    owner: 'your_github_username',
+    repo: 'your_repo_name',
 
-  // 用户头像
-  avatar: 'https://github.com/your_username.png',
+    // 分页配置
+    pageSize: 6,
 
-  // OAuth 配置
-  clientID: isDev ? 'dev_client_id' : 'prod_client_id',
-  clientSecret: isDev ? 'dev_client_secret' : 'prod_client_secret',
+    // CORS 代理（可选）
+    autoProxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+  },
 
-  // CORS 代理 (可选)
-  autoProxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+  app: {
+    // 应用功能开关
+    onlyShowOwner: false,
+    enableRepoSwitcher: false,
+    enableAbout: false,
+    enableEgg: false,
+  },
 };
 ```
+
+## ⚙️ 配置选项详解
+
+### 请求配置 (`config.request`)
+
+| 选项 | 类型 | 说明 | 使用场景 |
+|------|------|------|----------|
+| `token` | `string[]` | GitHub Personal Access Token 分割为两部分 | **安全性**：分割 token 以避免在源码中暴露，组合两部分形成完整 token |
+| `clientID` | `string` | GitHub OAuth 应用的 Client ID | **认证**：开发环境和生产环境使用不同的 ID |
+| `clientSecret` | `string` | GitHub OAuth 应用的 Client Secret | **认证**：开发环境和生产环境使用不同的密钥 |
+| `owner` | `string` | GitHub 仓库所有者（用户名） | **数据源**：指定使用哪个用户的仓库作为内容来源 |
+| `repo` | `string` | GitHub 仓库名称 | **数据源**：指定哪个仓库包含 Issues/内容 |
+| `pageSize` | `number` | 每页加载的 issue 数量 | **性能**：控制加载速度和内存占用，推荐值：6-12 |
+| `autoProxy` | `string` | OAuth 请求的 CORS 代理 URL | **跨域**：客户端 OAuth 流程必需，静态部署时使用 |
+
+### 应用配置 (`config.app`)
+
+| 选项 | 类型 | 说明 | 使用场景 |
+|------|------|------|----------|
+| `onlyShowOwner` | `boolean` | 只显示仓库所有者的 issues | **隐私控制**：个人博客设为 `true`，社区讨论设为 `false` |
+| `enableRepoSwitcher` | `boolean` | 启用仓库切换功能 | **多仓库管理**：管理多个内容仓库时设为 `true` |
+| `enableAbout` | `boolean` | 显示关于页面/部分 | **信息展示**：显示作者信息和项目详情 |
+| `enableEgg` | `boolean` | 启用彩蛋功能 | **趣味性**：隐藏功能或交互元素，增加用户参与度 |
+
+### 动态配置覆盖
+
+你可以通过定义 `window.GWITTER_CONFIG` 在运行时覆盖任何配置：
+
+```html
+<script>
+  window.GWITTER_CONFIG = {
+    app: {
+      enableAbout: true,
+      enableEgg: true,
+    },
+    request: {
+      pageSize: 10,
+    }
+  };
+</script>
+```
+
+### 常见配置场景
+
+1. **个人博客设置**
+   ```typescript
+   app: {
+     onlyShowOwner: true,       // 只显示自己的内容
+     enableAbout: true,         // 显示个人信息
+     enableRepoSwitcher: false, // 单一仓库
+   }
+   ```
+
+2. **社区讨论平台设置**
+   ```typescript
+   app: {
+     onlyShowOwner: false,      // 显示所有参与者
+     enableRepoSwitcher: true,  // 多个话题仓库
+     enableAbout: false,        // 专注于内容
+   }
+   ```
+
+3. **开发环境设置**
+   ```typescript
+   request: {
+     pageSize: 3,              // 更小的分页用于测试
+     // 使用开发环境的 OAuth 凭据
+   }
+   ```
 
 ### 4. 启动开发服务器
 
