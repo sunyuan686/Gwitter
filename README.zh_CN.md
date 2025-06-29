@@ -4,7 +4,7 @@
 
 ## 🎮 在线体验
 
-- **🌐 在线演示**: [https://simonaking.com/gwitter](https://simonaking.com/gwitter) - 体验 Gwitter 的完整功能
+- **🌐 在线演示**: [https://simonaking.com/Gwitter](https://simonaking.com/Gwitter) - 体验 Gwitter 的完整功能
 - **💭 分享想法**: [创建 Issue](https://github.com/SimonAKing/Gwitter/issues) 参与讨论交流
 - **📚 浏览讨论**: 在演示站点上探索现有的思考和见解
 

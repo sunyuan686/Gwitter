@@ -4,7 +4,7 @@
 
 ## 🎮 Playground
 
-- **🌐 Live Demo**: [https://simonaking.com/gwitter](https://simonaking.com/gwitter) - Experience Gwitter in action
+- **🌐 Live Demo**: [https://simonaking.com/Gwitter](https://simonaking.com/Gwitter) - Experience Gwitter in action
 - **💭 Share Your Thoughts**: [Create an Issue](https://github.com/SimonAKing/Gwitter/issues) to join the conversation
 - **📚 Browse Discussions**: Explore existing thoughts and insights on the demo site
 
