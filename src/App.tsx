@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import About from './components/About';
 import Egg from './components/Egg';
@@ -21,6 +22,16 @@ const Container = styled.div`
 
 const IssuesContainer = styled.div`
   /* letter-spacing: 1px; */
+`;
+
+const LoadingPlaceholder = styled.div<{ visible: boolean }>`
+  min-height: 200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+  opacity: ${(props) => (props.visible ? 1 : 0)};
+  transition: opacity 0.3s ease;
 `;
 
 const ErrorContainer = styled.div`
@@ -351,27 +362,51 @@ const App = () => {
       {issues.length > 0 && (
         <>
           <IssuesContainer>
-            {issues.map((issue, index) => (
-              <div
-                ref={index === issues.length - 1 ? lastIssueRef : undefined}
-                key={`${issue.id}-${index}`}
-              >
-                <Issue
-                  issue={issue}
-                  repoOwner={currentRepo.owner}
-                  repoName={currentRepo.repo}
-                />
-              </div>
-            ))}
+            <AnimatePresence mode="popLayout">
+              {issues.map((issue, index) => (
+                <motion.div
+                  key={issue.id}
+                  initial={{
+                    opacity: 0,
+                    y: 20,
+                    scale: 0.95,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -10,
+                    scale: 0.95,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: 'easeOut',
+                    layout: true,
+                  }}
+                  layout
+                >
+                  <div
+                    ref={index === issues.length - 1 ? lastIssueRef : undefined}
+                  >
+                    <Issue
+                      issue={issue}
+                      repoOwner={currentRepo.owner}
+                      repoName={currentRepo.repo}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </IssuesContainer>
         </>
       )}
-      {isLoading && !repoError && (
-        <IssuesContainer>
-          <SkeletonCard />
-          <SkeletonCard />
-        </IssuesContainer>
-      )}
+      <LoadingPlaceholder visible={true}>
+        <SkeletonCard />
+        <SkeletonCard />
+      </LoadingPlaceholder>
       {repoError && (
         <IssuesContainer>
           <ErrorContainer>

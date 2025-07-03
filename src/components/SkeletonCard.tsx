@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import {
   IssueBody,
-  IssueContainer,
   IssueContent,
   IssueFooter,
   IssueHeader,
@@ -32,12 +31,6 @@ const SkeletonAvatar = styled(SkeletonBase)`
   margin-bottom: 0;
   display: inline-flex;
   align-self: center;
-
-  @media (max-width: 479px) {
-    width: 1.5em;
-    height: 1.5em;
-    margin-right: 0.3em;
-  }
 `;
 
 const SkeletonUsername = styled(SkeletonBase)`
@@ -46,11 +39,6 @@ const SkeletonUsername = styled(SkeletonBase)`
   display: inline-flex;
   align-self: center;
   margin-bottom: 0;
-
-  @media (max-width: 479px) {
-    width: 90px;
-    height: 18px;
-  }
 `;
 
 const SkeletonDate = styled(SkeletonBase)`
@@ -60,12 +48,6 @@ const SkeletonDate = styled(SkeletonBase)`
   align-self: center;
   margin-bottom: 0;
   margin-left: 20px;
-
-  @media (max-width: 479px) {
-    width: 60px;
-    height: 14px;
-    margin-left: 10px;
-  }
 `;
 
 const SkeletonLabel = styled(SkeletonBase)`
@@ -74,38 +56,30 @@ const SkeletonLabel = styled(SkeletonBase)`
   position: absolute;
   right: 0;
   top: 0;
-
-  @media (max-width: 479px) {
-    width: 50px;
-    height: 20px;
-  }
 `;
 
 const SkeletonLine = styled(SkeletonBase)<{ width: string }>`
   height: 16px;
   margin-top: 12px;
   width: ${(props) => props.width};
-
-  @media (max-width: 479px) {
-    height: 14px;
-    margin-top: 10px;
-  }
 `;
 
 const SkeletonInteractions = styled(SkeletonBase)`
   width: 100px;
   height: 20px;
-  margin-top: 16px;
+  margin: 16px 0px;
+`;
 
-  @media (max-width: 479px) {
-    width: 80px;
-    height: 18px;
-    margin-top: 12px;
-  }
+export const SkeletonContainer = styled.div`
+  position: relative;
+  /* padding: 0.625em 0; */
+  margin-bottom: 0.625em;
+  display: flex;
+  border-radius: 10px;
 `;
 
 export const SkeletonCard = () => (
-  <IssueContainer>
+  <SkeletonContainer>
     <IssueContent>
       <IssueHeader>
         <SkeletonAvatar />
@@ -123,7 +97,7 @@ export const SkeletonCard = () => (
         <SkeletonInteractions />
       </IssueFooter>
     </IssueContent>
-  </IssueContainer>
+  </SkeletonContainer>
 );
 
 export default SkeletonCard;
