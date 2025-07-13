@@ -21,11 +21,13 @@ const ToolbarContainer = styled.div`
   margin: 6px;
   margin-bottom: 1em;
 
-  @media (max-width: 600px) {
-    flex-direction: column;
-    gap: 8px;
-    align-items: stretch;
-  }
+  ${config.app.enableRepoSwitcher && `
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
+    }
+  `}
 `;
 
 const LeftSection = styled.div`
@@ -284,21 +286,21 @@ const Toolbar = ({
     <ToolbarContainer>
       <LeftSection>
         <LanguageSwitcher />
-        <RepoInputContainer>
-          <RepoLabel>{t('toolbar.repo')}</RepoLabel>
-          <RepoInput
-            value={repoInput}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            placeholder={t('toolbar.repoPlaceholder')}
-            disabled={!config.app.enableRepoSwitcher}
-            style={{
-              borderColor: error || validationError ? '#ff6b6b' : '#e1e8ed',
-              opacity: !config.app.enableRepoSwitcher ? 0.6 : 1,
-              cursor: !config.app.enableRepoSwitcher ? 'not-allowed' : 'text',
-            }}
-          />
-          {config.app.enableRepoSwitcher && (
+        {config.app.enableRepoSwitcher && (
+          <RepoInputContainer>
+            <RepoLabel>{t('toolbar.repo')}</RepoLabel>
+            <RepoInput
+              value={repoInput}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder={t('toolbar.repoPlaceholder')}
+              disabled={!config.app.enableRepoSwitcher}
+              style={{
+                borderColor: error || validationError ? '#ff6b6b' : '#e1e8ed',
+                opacity: !config.app.enableRepoSwitcher ? 0.6 : 1,
+                cursor: !config.app.enableRepoSwitcher ? 'not-allowed' : 'text',
+              }}
+            />
             <ApplyButton
               onClick={handleApplyRepo}
               disabled={!isValidRepo(repoInput) || repoLoading}
@@ -310,8 +312,8 @@ const Toolbar = ({
                 t('toolbar.apply')
               )}
             </ApplyButton>
-          )}
-        </RepoInputContainer>
+          </RepoInputContainer>
+        )}
       </LeftSection>
       <RightSection>{renderAuthSection()}</RightSection>
     </ToolbarContainer>
