@@ -63,8 +63,6 @@ Gwitter is a lightweight microblogging application built on GitHub Issues. It re
 
 Gwitter supports automatically syncing newly published Issues to Telegram and GitHub Gist via GitHub Actions.
 
-#### Setting up Sync Features
-
 1. **Create Sync Script**
    - Refer to [sync.js](https://github.com/SimonAKing/weibo/blob/master/sync.js) implementation
    - Create `.github/workflows/sync.yml` in the repository
@@ -88,56 +86,82 @@ Gwitter supports automatically syncing newly published Issues to Telegram and Gi
 - **Internationalization**: i18next
 - **Code Standards**: ESLint + Prettier
 
-## 🏗️ Project Structure
-
-Gwitter follows a modern React architecture with the following key components:
-
 ```
-src/
-├── components/           # React components
-│   ├── common/          # Shared UI components
-│   ├── About.tsx        # About page component
-│   ├── CommentInput.tsx # Comment input component
-│   └── ...
-├── hooks/               # Custom React hooks
-│   └── useAuth.tsx      # Authentication hook
-├── utils/               # Utility functions
-│   ├── cache.ts         # Caching utilities
-│   ├── request.ts       # API request utilities
-│   └── index.ts         # Common utilities
-├── config/              # Configuration files
-│   └── index.ts         # Main configuration
-├── i18n/                # Internationalization
-│   ├── index.ts         # i18n setup
-│   └── locales/         # Language files
-├── types/               # TypeScript type definitions
-│   └── global.d.ts      # Global types
-└── lib/                 # External libraries
-    └── collapse.js      # UI collapse functionality
+Gwitter/
+├── src/                  # Main source code
+│   ├── components/       # React components
+│   │   ├── common/      # Shared UI components
+│   │   ├── About.tsx    # About page component
+│   │   ├── CommentInput.tsx # Comment input component
+│   │   └── ...
+│   ├── hooks/           # Custom React hooks
+│   │   └── useAuth.tsx  # Authentication hook
+│   ├── utils/           # Utility functions
+│   │   ├── cache.ts     # Caching utilities
+│   │   ├── request.ts   # API request utilities
+│   │   └── index.ts     # Common utilities
+│   ├── config/          # Configuration files
+│   │   └── index.ts     # Main configuration
+│   ├── i18n/            # Internationalization
+│   │   ├── index.ts     # i18n setup
+│   │   └── locales/     # Language files
+│   ├── types/           # TypeScript type definitions
+│   │   └── global.d.ts  # Global types
+│   └── lib/             # External libraries
+│       └── collapse.js  # UI collapse functionality
+├── demo/                # Demo examples
+│   ├── npm-demo/        # NPM/React demo
+│   │   ├── src/         # React source files
+│   │   │   ├── App.tsx  # Main demo component
+│   │   │   ├── config/  # Demo configuration
+│   │   │   └── ...
+│   │   ├── package.json # Dependencies
+│   │   └── vite.config.ts # Build config
+│   ├── umd-demo/        # UMD/Browser demo
+│   │   └── index.html   # Complete HTML demo
+│   └── README.md        # Demo documentation
+├── docs/                # Documentation assets
+│   └── *.png           # Setup screenshots
+└── dist/               # Built files for distribution
+    ├── gwitter.min.js  # UMD bundle
+    └── gwitter.min.css # Styles
 ```
-
-### Core Architecture
-
-- **Data Layer**: GitHub Issues API serves as the backend
-- **Authentication**: GitHub OAuth for user authentication
-- **State Management**: React Hooks for component state
-- **Styling**: Emotion (CSS-in-JS) for component styling
-- **Internationalization**: i18next for multi-language support
-- **Build System**: Rsbuild (Rspack-based) for fast compilation
-
-### Key Features Implementation
-
-- **Issue Loading**: GraphQL API queries with pagination
-- **Real-time Reactions**: GitHub Reactions API integration
-- **Comment System**: Nested comment threading
-- **Responsive Design**: CSS-in-JS with mobile-first approach
-- **Performance**: Virtual scrolling and skeleton screens
 
 ## 📦 Installation & Usage
 
 > 🎯 **Quick Start**: Check out our [live demos](./demo/) to see Gwitter in action!
-> - [NPM Demo](./demo/npm-demo/) - React + TypeScript + Vite
-> - [UMD Demo](./demo/umd-demo/) - Plain HTML without build tools
+
+### 📖 Demo Examples
+
+Two demo examples to get you started:
+
+#### 🔧 [NPM Demo](./demo/npm-demo/) - React Development
+For modern React applications with build tools.
+
+```bash
+cd demo/npm-demo
+npm install
+npm run dev
+```
+
+#### 🌐 [UMD Demo](./demo/umd-demo/) - Browser Integration
+For existing websites without build tools.
+
+```html
+<!-- Just open index.html in your browser -->
+<script src="https://unpkg.com/gwitter/dist/gwitter.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/gwitter/dist/gwitter.min.css">
+```
+
+#### 📋 Setup Requirements
+
+Both demos need GitHub configuration:
+1. Create a GitHub repository for your content
+2. Generate a Personal Access Token with `repo` and `read:user` permissions
+3. Create a GitHub OAuth Application
+4. Update demo config files with your details
+
+See [Configuration Setup](#3-configuration-setup) for detailed instructions.
 
 ### Method 1: NPM Installation (Recommended)
 
@@ -334,110 +358,6 @@ gwitter({
     app: {
       onlyShowOwner: true,
       enableAbout: true,
-    }
-  }
-});
-```
-
-## 🎨 Customization
-
-### Feature Configuration
-
-You can customize Gwitter's behavior through the configuration options:
-
-```javascript
-gwitter({
-  container: document.getElementById('comments'),
-  config: {
-    request: {
-      pageSize: 10,          // Load more issues per page
-    },
-    app: {
-      onlyShowOwner: true,   // Show only repository owner's content
-      enableAbout: true,     // Show about page
-      enableEgg: false,      // Disable easter egg features
-    }
-  }
-});
-```
-
-### Common Configuration Scenarios
-
-#### 1. Personal Blog Setup
-Perfect for individual bloggers who want to share their thoughts:
-
-```javascript
-gwitter({
-  container: '#blog-comments',
-  config: {
-    request: {
-      pageSize: 8,
-    },
-    app: {
-      onlyShowOwner: true,      // Show only your content
-      enableAbout: true,        // Display author information
-      enableRepoSwitcher: false, // Single repository focus
-      enableEgg: true,          // Fun interactive elements
-    }
-  }
-});
-```
-
-#### 2. Project Documentation
-Ideal for project announcements and updates:
-
-```javascript
-gwitter({
-  container: '#project-updates',
-  config: {
-    request: {
-      pageSize: 5,
-    },
-    app: {
-      onlyShowOwner: true,      // Official updates only
-      enableAbout: false,       // Focus on content
-      enableRepoSwitcher: false, // Single project focus
-      enableEgg: false,         // Professional appearance
-    }
-  }
-});
-```
-
-#### 3. Community Discussion Platform
-Great for open discussions and community engagement:
-
-```javascript
-gwitter({
-  container: '#community-discussions',
-  config: {
-    request: {
-      pageSize: 12,
-    },
-    app: {
-      onlyShowOwner: false,     // Show all participants
-      enableAbout: true,        // Community information
-      enableRepoSwitcher: true, // Multiple discussion topics
-      enableEgg: true,          // Engaging user experience
-    }
-  }
-});
-```
-
-#### 4. Portfolio Showcase
-Showcase your work and achievements:
-
-```javascript
-gwitter({
-  container: '#portfolio-showcase',
-  config: {
-    request: {
-      pageSize: 6,
-    },
-    app: {
-      onlyShowOwner: true,      // Your work only
-      enableAbout: true,        // Professional profile
-      enableRepoSwitcher: false, // Single portfolio
-      enableEgg: false,         // Clean professional look
     }
   }
 });

@@ -5,27 +5,20 @@ import './App.css';
 import { GwitterConfig, config } from './config/gwitter.config';
 
 function App() {
-  const [currentConfig, setCurrentConfig] = useState<GwitterConfig>(config);
-  const [currentConfigKey, setCurrentConfigKey] = useState('personal-blog');
-  const [gwitterInstance, setGwitterInstance] = useState<any>(null);
+  const [currentConfig] = useState<GwitterConfig>(config);
 
   const initializeGwitter = useCallback((config: GwitterConfig) => {
-    // Defer DOM manipulation to avoid synchronous unmount during rendering
     setTimeout(() => {
       try {
-        // Clear previous instance if exists
         const container = document.getElementById('gwitter-container');
         if (container) {
           container.innerHTML = '';
         }
 
-        // Initialize new Gwitter instance
-        const instance = gwitter({
+        gwitter({
           container: document.getElementById('gwitter-container'),
           config,
         });
-
-        setGwitterInstance(instance);
       } catch (error) {
         console.error('Failed to initialize Gwitter:', error);
         const container = document.getElementById('gwitter-container');
@@ -43,14 +36,6 @@ function App() {
       }
     }, 0);
   }, []);
-
-  const handleConfigChange = useCallback(
-    (newConfig: GwitterConfig) => {
-      setCurrentConfig(newConfig);
-      initializeGwitter(newConfig);
-    },
-    [initializeGwitter],
-  );
 
   useEffect(() => {
     initializeGwitter(currentConfig);
