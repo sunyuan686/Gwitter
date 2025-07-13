@@ -20,6 +20,12 @@ const ToolbarContainer = styled.div`
   border: 0.5px solid #f1f1f1;
   margin: 6px;
   margin-bottom: 1em;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
 `;
 
 const LeftSection = styled.div`

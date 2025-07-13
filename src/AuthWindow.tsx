@@ -18,7 +18,7 @@ const InitingWrapper = styled.div`
 `;
 
 const InitingText = styled.p`
-  margin: 0.625em auto;
+  margin: 0.5em auto;
   color: #999;
 `;
 

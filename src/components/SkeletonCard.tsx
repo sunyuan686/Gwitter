@@ -72,8 +72,7 @@ const SkeletonInteractions = styled(SkeletonBase)`
 
 export const SkeletonContainer = styled.div`
   position: relative;
-  /* padding: 0.625em 0; */
-  margin-bottom: 0.625em;
+  margin-bottom: 0.5em;
   display: flex;
   border-radius: 10px;
 `;

@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 
 export const IssueContainer = styled.div`
   position: relative;
-  /* padding: 0.625em 0; */
-  margin: 0.625em 0;
+  margin: 0.5em 0;
   display: flex;
   border-radius: 10px;
 `;
