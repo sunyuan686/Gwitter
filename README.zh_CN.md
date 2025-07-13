@@ -78,27 +78,161 @@ Gwitter 支持通过 GitHub Actions 自动将新发布的 Issue 同步到 Telegr
 - **国际化**：i18next
 - **代码规范**：ESLint + Prettier
 
-## 📦 快速开始
+## 🏗️ 项目结构
 
-### 环境要求
+Gwitter 遵循现代 React 架构，包含以下关键组件：
 
-- Node.js >= 16
-- pnpm >= 8 (推荐)
-
-### 1. 克隆项目
-
-```bash
-git clone https://github.com/SimonAKing/Gwitter.git
-cd Gwitter
+```
+src/
+├── components/           # React 组件
+│   ├── common/          # 共享 UI 组件
+│   ├── About.tsx        # 关于页面组件
+│   ├── CommentInput.tsx # 评论输入组件
+│   └── ...
+├── hooks/               # 自定义 React hooks
+│   └── useAuth.tsx      # 身份验证 hook
+├── utils/               # 工具函数
+│   ├── cache.ts         # 缓存工具
+│   ├── request.ts       # API 请求工具
+│   └── index.ts         # 通用工具
+├── config/              # 配置文件
+│   └── index.ts         # 主要配置
+├── i18n/                # 国际化
+│   ├── index.ts         # i18n 设置
+│   └── locales/         # 语言文件
+├── types/               # TypeScript 类型定义
+│   └── global.d.ts      # 全局类型
+└── lib/                 # 外部库
+    └── collapse.js      # UI 折叠功能
 ```
 
-### 2. 安装依赖
+### 核心架构
+
+- **数据层**：GitHub Issues API 作为后端
+- **身份验证**：GitHub OAuth 用户认证
+- **状态管理**：React Hooks 管理组件状态
+- **样式方案**：Emotion (CSS-in-JS) 组件样式
+- **国际化**：i18next 多语言支持
+- **构建系统**：Rsbuild (基于 Rspack) 快速编译
+
+### 关键功能实现
+
+- **Issue 加载**：GraphQL API 查询与分页
+- **实时反应**：GitHub Reactions API 集成
+- **评论系统**：嵌套评论线程
+- **响应式设计**：CSS-in-JS 移动优先方法
+- **性能优化**：虚拟滚动和骨架屏
+
+## 📦 安装与使用
+
+> 🎯 **快速开始**：查看我们的[在线演示](./demo/)，看看 Gwitter 的实际效果！
+> - [NPM 演示](./demo/npm-demo/) - React + TypeScript + Vite
+> - [UMD 演示](./demo/umd-demo/) - 无需构建工具的纯 HTML
+
+### 方式 1：NPM 安装（推荐）
+
+适用于使用模块打包器的现代 JavaScript 项目：
+
+#### 环境要求
+- **React**: ^18.0.0 或更高版本
+- **React DOM**: ^18.0.0 或更高版本
+
+#### 安装
 
 ```bash
-pnpm install
+npm install gwitter react react-dom
+# 或
+yarn add gwitter react react-dom
 ```
 
-### 3. 配置 GitHub
+#### 使用
+
+```javascript
+import gwitter from 'gwitter';
+import 'gwitter/dist/gwitter.min.css';
+
+gwitter({
+  container: document.getElementById('comments'),
+  config: {
+    request: {
+      // GitHub Personal Access Token
+      token: ['your_token_part1', 'your_token_part2'],
+
+      // OAuth 配置
+      clientID: 'your_github_oauth_client_id',
+      clientSecret: 'your_github_oauth_client_secret',
+
+      // GitHub 仓库配置
+      owner: 'your_github_username',
+      repo: 'your_repo_name',
+
+      // 分页配置
+      pageSize: 6,
+
+      // CORS 代理（可选）
+      autoProxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+    },
+    app: {
+      // 应用功能开关
+      onlyShowOwner: false,
+      enableRepoSwitcher: false,
+      enableAbout: false,
+      enableEgg: false,
+    },
+  }
+});
+```
+
+### 方式 2：UMD（浏览器）
+
+适用于不使用构建工具的直接浏览器使用：
+
+```html
+<!-- 引入 React 和 ReactDOM -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<!-- 引入 Gwitter -->
+<script src="https://unpkg.com/gwitter/dist/gwitter.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/gwitter/dist/gwitter.min.css">
+
+<script>
+  gwitter({
+    container: document.getElementById('comments'),
+    config: {
+      request: {
+        // GitHub Personal Access Token
+        token: ['your_token_part1', 'your_token_part2'],
+
+        // OAuth 配置
+        clientID: 'your_github_oauth_client_id',
+        clientSecret: 'your_github_oauth_client_secret',
+
+        // GitHub 仓库配置
+        owner: 'your_github_username',
+        repo: 'your_repo_name',
+
+        // 分页配置
+        pageSize: 6,
+
+        // CORS 代理（可选）
+        autoProxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+      },
+      app: {
+        // 应用功能开关
+        onlyShowOwner: false,
+        enableRepoSwitcher: false,
+        enableAbout: false,
+        enableEgg: false,
+      },
+    }
+  });
+</script>
+```
+
+### 3. 配置设置
+
+在使用 Gwitter 之前，您需要进行 GitHub 配置：
 
 #### 3.1 创建 GitHub Repository
 
@@ -125,162 +259,74 @@ pnpm install
 2. 点击 "New OAuth App"
 <img src="./docs/oauth.png" alt="OAuth 应用" width="500">
 
-3. 填写调试以及生产环境的应用信息：
+3. 填写应用信息：
    - **Application name**: Gwitter
-   - **Homepage URL**: `http://localhost:3000` (开发环境) 或你的部署域名
-   - **Authorization callback URL**: `http://localhost:3000` (开发环境) 或你的部署域名
+   - **Homepage URL**: 你的部署域名
+   - **Authorization callback URL**: 你的部署域名
 4. 创建后获得 `Client ID` 和 `Client Secret`
 
-#### 3.4 配置应用
+### 4. API 参考
 
-修改 `src/config/index.ts` 文件：
+#### `gwitter(options)`
 
-```typescript
-const config = {
-  request: {
-    // GitHub Personal Access Token
-    token: ['your_token_part1', 'your_token_part2'],
+初始化并渲染 Gwitter 的主函数。
 
-    // OAuth 配置
-    clientID: isDev ? 'dev_client_id' : 'prod_client_id',
-    clientSecret: isDev ? 'dev_client_secret' : 'prod_client_secret',
+**参数：**
 
-    // GitHub 仓库配置
-    owner: 'your_github_username',
-    repo: 'your_repo_name',
+- `options` (Object): Gwitter 的配置选项
 
-    // 分页配置
-    pageSize: 6,
+**options.container** (HTMLElement | string) - **必需**
+- 渲染 Gwitter 的 DOM 元素或 CSS 选择器
+- 示例：`document.getElementById('comments')` 或 `'#comments'`
 
-    // CORS 代理（可选）
-    autoProxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
-  },
+**options.config** (Object) - **必需**
+- 包含请求和应用设置的配置对象
 
-  app: {
-    // 应用功能开关
-    onlyShowOwner: false,
-    enableRepoSwitcher: false,
-    enableAbout: false,
-    enableEgg: false,
-  },
-};
-```
+**options.config.request** (Object) - **必需**
+- GitHub API 和身份验证配置
 
-## ⚙️ 配置选项详解
+| 属性 | 类型 | 必需 | 说明 | 示例 |
+|------|------|------|------|------|
+| `token` | `string[]` | ✅ | GitHub Personal Access Token 分割为两部分以提高安全性 | `['ghp_xxxx', 'xxxx']` |
+| `clientID` | `string` | ✅ | GitHub OAuth 应用的 Client ID | `'your_client_id'` |
+| `clientSecret` | `string` | ✅ | GitHub OAuth 应用的 Client Secret | `'your_client_secret'` |
+| `owner` | `string` | ✅ | GitHub 仓库所有者（用户名） | `'your_username'` |
+| `repo` | `string` | ✅ | GitHub 仓库名称 | `'your_repo_name'` |
+| `pageSize` | `number` | ❌ | 每页加载的 issue 数量（默认：6） | `6` |
+| `autoProxy` | `string` | ❌ | OAuth 请求的 CORS 代理 URL | `'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token'` |
 
-### 请求配置 (`config.request`)
+**options.config.app** (Object) - **可选**
+- 应用行为配置
 
-| 选项 | 类型 | 说明 | 使用场景 |
-|------|------|------|----------|
-| `token` | `string[]` | GitHub Personal Access Token 分割为两部分 | **安全性**：分割 token 以避免在源码中暴露，组合两部分形成完整 token |
-| `clientID` | `string` | GitHub OAuth 应用的 Client ID | **认证**：开发环境和生产环境使用不同的 ID |
-| `clientSecret` | `string` | GitHub OAuth 应用的 Client Secret | **认证**：开发环境和生产环境使用不同的密钥 |
-| `owner` | `string` | GitHub 仓库所有者（用户名） | **数据源**：指定使用哪个用户的仓库作为内容来源 |
-| `repo` | `string` | GitHub 仓库名称 | **数据源**：指定哪个仓库包含 Issues/内容 |
-| `pageSize` | `number` | 每页加载的 issue 数量 | **性能**：控制加载速度和内存占用，推荐值：6-12 |
-| `autoProxy` | `string` | OAuth 请求的 CORS 代理 URL | **跨域**：客户端 OAuth 流程必需，静态部署时使用 |
+| 属性 | 类型 | 默认值 | 说明 | 示例 |
+|------|------|--------|------|------|
+| `onlyShowOwner` | `boolean` | `false` | 只显示仓库所有者的 issues | `false` |
+| `enableRepoSwitcher` | `boolean` | `false` | 启用仓库切换功能 | `false` |
+| `enableAbout` | `boolean` | `false` | 显示关于页面/部分 | `false` |
+| `enableEgg` | `boolean` | `false` | 启用彩蛋功能 | `false` |
 
-### 应用配置 (`config.app`)
+**返回值：**
+- `Promise<void>` - 当 Gwitter 成功初始化时解决
 
-| 选项 | 类型 | 说明 | 使用场景 |
-|------|------|------|----------|
-| `onlyShowOwner` | `boolean` | 只显示仓库所有者的 issues | **隐私控制**：个人博客设为 `true`，社区讨论设为 `false` |
-| `enableRepoSwitcher` | `boolean` | 启用仓库切换功能 | **多仓库管理**：管理多个内容仓库时设为 `true` |
-| `enableAbout` | `boolean` | 显示关于页面/部分 | **信息展示**：显示作者信息和项目详情 |
-| `enableEgg` | `boolean` | 启用彩蛋功能 | **趣味性**：隐藏功能或交互元素，增加用户参与度 |
-
-### 动态配置覆盖
-
-你可以通过定义 `window.GWITTER_CONFIG` 在运行时覆盖任何配置：
-
-```html
-<script>
-  window.GWITTER_CONFIG = {
-    app: {
-      enableAbout: true,
-      enableEgg: true,
-    },
+**示例：**
+```javascript
+gwitter({
+  container: '#comments',
+  config: {
     request: {
+      token: ['ghp_xxxx', 'xxxx'],
+      clientID: 'your_client_id',
+      clientSecret: 'your_client_secret',
+      owner: 'your_username',
+      repo: 'your_repo_name',
       pageSize: 10,
+    },
+    app: {
+      onlyShowOwner: true,
+      enableAbout: true,
     }
-  };
-</script>
-```
-
-### 常见配置场景
-
-1. **个人博客设置**
-   ```typescript
-   app: {
-     onlyShowOwner: true,       // 只显示自己的内容
-     enableAbout: true,         // 显示个人信息
-     enableRepoSwitcher: false, // 单一仓库
-   }
-   ```
-
-2. **社区讨论平台设置**
-   ```typescript
-   app: {
-     onlyShowOwner: false,      // 显示所有参与者
-     enableRepoSwitcher: true,  // 多个话题仓库
-     enableAbout: false,        // 专注于内容
-   }
-   ```
-
-3. **开发环境设置**
-   ```typescript
-   request: {
-     pageSize: 3,              // 更小的分页用于测试
-     // 使用开发环境的 OAuth 凭据
-   }
-   ```
-
-### 构建配置 (`rsbuild.config.mjs`)
-
-| 选项 | 类型 | 说明 | 使用场景 |
-|------|------|------|----------|
-| `output.assetPrefix` | `string` | 静态资源前缀路径 | **部署配置**：设置 CDN 地址或子目录路径。示例：`'https://cdn.example.com/'`，`'/Gwitter/'` |
-
-**配置示例：**
-```javascript
-export default defineConfig({
-  output: {
-    assetPrefix: process.env.NODE_ENV === 'production'
-      ? 'https://your-domain.com/Gwitter/'
-      : '/',
-  },
+  }
 });
-```
-
-### 4. 启动开发服务器
-
-```bash
-pnpm dev
-```
-
-访问 [http://localhost:3000](http://localhost:3000) 查看应用。
-
-### 5. 配置资源前缀（可选）
-
-当部署到子目录或 CDN 时，修改 `rsbuild.config.mjs`：
-
-```javascript
-export default defineConfig({
-  // ... 其他配置
-  output: {
-    assetPrefix: 'https://your-domain.com/Gwitter/', // 或使用相对路径 '/Gwitter/'
-  },
-});
-```
-
-### 6. 构建部署
-
-```bash
-# 构建生产版本
-pnpm build
-
-# 预览构建结果
-pnpm preview
 ```
 
 ## 📝 使用说明
@@ -295,22 +341,107 @@ pnpm preview
 
 ## 🎨 定制化
 
-### 修改主题
+### 功能配置
 
-编辑 `src/components/common/IssueLayout.tsx` 和相关样式文件来定制界面风格。
+您可以通过配置选项来定制 Gwitter 的行为：
 
-### 添加功能
+```javascript
+gwitter({
+  container: document.getElementById('comments'),
+  config: {
+    request: {
+      pageSize: 10,          // 每页加载更多 issue
+    },
+    app: {
+      onlyShowOwner: true,   // 只显示仓库所有者的内容
+      enableAbout: true,     // 显示关于页面
+      enableEgg: false,      // 禁用彩蛋功能
+    }
+  }
+});
+```
 
-项目采用模块化设计，可以轻松添加新功能：
+### 常见配置场景
 
-- `src/components/`: 界面组件
-- `src/hooks/`: 自定义 Hooks
-- `src/utils/`: 工具函数
-- `src/config/`: 配置文件
+#### 1. 个人博客设置
+适合想要分享个人想法的博主：
 
-### 国际化
+```javascript
+gwitter({
+  container: '#blog-comments',
+  config: {
+    request: {
+      pageSize: 8,
+    },
+    app: {
+      onlyShowOwner: true,      // 只显示您的内容
+      enableAbout: true,        // 显示作者信息
+      enableRepoSwitcher: false, // 专注单一仓库
+      enableEgg: true,          // 有趣的交互元素
+    }
+  }
+});
+```
 
-在 `src/i18n/locales/` 目录下添加新的语言文件，并在 `src/i18n/index.ts` 中注册。
+#### 2. 项目文档
+适合项目公告和更新：
+
+```javascript
+gwitter({
+  container: '#project-updates',
+  config: {
+    request: {
+      pageSize: 5,
+    },
+    app: {
+      onlyShowOwner: true,      // 仅显示官方更新
+      enableAbout: false,       // 专注于内容
+      enableRepoSwitcher: false, // 专注单一项目
+      enableEgg: false,         // 专业外观
+    }
+  }
+});
+```
+
+#### 3. 社区讨论平台
+适合开放讨论和社区参与：
+
+```javascript
+gwitter({
+  container: '#community-discussions',
+  config: {
+    request: {
+      pageSize: 12,
+    },
+    app: {
+      onlyShowOwner: false,     // 显示所有参与者
+      enableAbout: true,        // 社区信息
+      enableRepoSwitcher: true, // 多个讨论主题
+      enableEgg: true,          // 吸引用户体验
+    }
+  }
+});
+```
+
+#### 4. 作品展示
+展示您的工作和成就：
+
+```javascript
+gwitter({
+  container: '#portfolio-showcase',
+  config: {
+    request: {
+      pageSize: 6,
+    },
+    app: {
+      onlyShowOwner: true,      // 仅显示您的作品
+      enableAbout: true,        // 专业资料
+      enableRepoSwitcher: false, // 单一作品集
+      enableEgg: false,         // 简洁专业外观
+    }
+  }
+});
+```
 
 ## 🤝 贡献
 
