@@ -78,11 +78,11 @@ const App = () => {
       if (urlRepo) {
         return urlRepo;
       }
-    }
 
-    const lastRepo = loadLastRepo();
-    if (lastRepo) {
-      return lastRepo;
+      const lastRepo = loadLastRepo();
+      if (lastRepo) {
+        return lastRepo;
+      }
     }
 
     if (config.request.owner && config.request.repo) {
@@ -227,8 +227,8 @@ const App = () => {
   const handleRepoChange = useCallback((owner: string, repo: string) => {
     console.log('Repo changed to:', { owner, repo });
     setCurrentRepo({ owner, repo });
-    saveLastRepo(owner, repo);
     if (config.app.enableRepoSwitcher) {
+      saveLastRepo(owner, repo);
       updateUrlParams(owner, repo);
     }
   }, []);
@@ -271,7 +271,7 @@ const App = () => {
         loadMoreTriggeredRef.current
       ) {
         console.log(
-          '❌ handleScroll blocked - already loading, no more pages, or already triggered',
+          'handleScroll blocked - already loading, no more pages, or already triggered',
         );
         return;
       }
@@ -293,7 +293,7 @@ const App = () => {
       const isLastIssueVisible = rect.top < viewportHeight;
 
       console.log(
-        '📏 Scroll metrics - lastIssue.top:',
+        'Scroll metrics - lastIssue.top:',
         rect.top,
         'viewportHeight:',
         viewportHeight,
@@ -323,7 +323,11 @@ const App = () => {
       resetAndLoadNewRepo();
       setIsInitialized(true);
 
-      if (currentRepo.owner && currentRepo.repo && config.app.enableRepoSwitcher) {
+      if (
+        currentRepo.owner &&
+        currentRepo.repo &&
+        config.app.enableRepoSwitcher
+      ) {
         updateUrlParams(currentRepo.owner, currentRepo.repo);
       }
     }
