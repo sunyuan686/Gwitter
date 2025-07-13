@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import About from './components/About';
+import AnimatedCard from './components/AnimatedCard';
 import Egg from './components/Egg';
 import Issue from './components/Issue';
 import SkeletonCard from './components/SkeletonCard';
@@ -306,7 +307,7 @@ const App = () => {
     // 只有当初始化完成、有下一页、且至少有一些 issues 时才添加滚动监听器
     if (isInitialized && hasNextPage && issues.length > 0) {
       console.log(
-        '📝 Preparing to add scroll listener, issues count:',
+        'Preparing to add scroll listener, issues count:',
         issues.length,
       );
 
@@ -314,16 +315,15 @@ const App = () => {
       const timeoutId = setTimeout(() => {
         // 再次检查 lastIssueRef 是否已经设置
         if (lastIssueRef.current) {
-          console.log('✅ Adding scroll listener, lastIssueRef exists');
+          console.log('Adding scroll listener, lastIssueRef exists');
           window.addEventListener('scroll', handleScroll, false);
         } else {
-          console.log('⚠️ lastIssueRef still null, will retry on next render');
+          console.log('lastIssueRef still null, will retry on next render');
         }
       }, 100);
 
       return () => {
         clearTimeout(timeoutId);
-        console.log('🗑️ Removing scroll listener');
         window.removeEventListener('scroll', handleScroll);
         if (scrollTimeoutRef.current) {
           clearTimeout(scrollTimeoutRef.current);
@@ -364,30 +364,7 @@ const App = () => {
           <IssuesContainer>
             <AnimatePresence mode="popLayout">
               {issues.map((issue, index) => (
-                <motion.div
-                  key={issue.id}
-                  initial={{
-                    opacity: 0,
-                    y: 20,
-                    scale: 0.95,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    y: -10,
-                    scale: 0.95,
-                  }}
-                  transition={{
-                    duration: 0.3,
-                    ease: 'easeOut',
-                    layout: true,
-                  }}
-                  layout
-                >
+                <AnimatedCard key={issue.id} id={issue.id}>
                   <div
                     ref={index === issues.length - 1 ? lastIssueRef : undefined}
                   >
@@ -397,7 +374,7 @@ const App = () => {
                       repoName={currentRepo.repo}
                     />
                   </div>
-                </motion.div>
+                </AnimatedCard>
               ))}
             </AnimatePresence>
           </IssuesContainer>
