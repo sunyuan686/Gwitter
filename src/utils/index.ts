@@ -309,3 +309,26 @@ export const processLinksInHTML = (html: string) => {
 
   return div.innerHTML;
 };
+
+const G_OWNER = 'owner';
+const G_REPO = 'repo';
+
+export const getRepoFromUrl = (): { owner: string; repo: string } | null => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const owner = urlParams.get(G_OWNER);
+  const repo = urlParams.get(G_REPO);
+
+  if (owner && repo) {
+    return { owner, repo };
+  }
+
+  return null;
+};
+
+export const updateUrlParams = (owner: string, repo: string) => {
+  const url = new URL(window.location.href);
+  url.searchParams.set(G_OWNER, owner);
+  url.searchParams.set(G_REPO, repo);
+
+  window.history.replaceState(null, '', url.toString());
+};

@@ -10,7 +10,12 @@ import Toolbar from './components/Toolbar';
 import config from './config';
 
 import { AuthProvider, useAuth } from './hooks/useAuth';
-import { ProcessedIssue, transformIssues } from './utils';
+import {
+  getRepoFromUrl,
+  ProcessedIssue,
+  transformIssues,
+  updateUrlParams,
+} from './utils';
 import { loadLastRepo, saveLastRepo } from './utils/cache';
 import { api, getIssuesQL } from './utils/request';
 
@@ -68,10 +73,21 @@ const App = () => {
   const [rawIssuesData, setRawIssuesData] = useState<any[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [currentRepo, setCurrentRepo] = useState(() => {
+    const urlRepo = getRepoFromUrl();
+    if (urlRepo) {
+      return urlRepo;
+    }
+
     const lastRepo = loadLastRepo();
-    return (
-      lastRepo || { owner: config.request.owner, repo: config.request.repo }
-    );
+    if (lastRepo) {
+      return lastRepo;
+    }
+
+    if (config.request.owner && config.request.repo) {
+      return { owner: config.request.owner, repo: config.request.repo };
+    }
+
+    return { owner: '', repo: '' };
   });
   const [repoError, setRepoError] = useState<string | null>(null);
 
@@ -145,6 +161,15 @@ const App = () => {
 
   const resetAndLoadNewRepo = useCallback(async () => {
     console.log('Resetting and loading new repo:', currentRepo);
+
+    // 检查 owner 和 repo 是否为空
+    if (!currentRepo.owner || !currentRepo.repo) {
+      setIsLoading(false);
+      setIsRepoLoading(false);
+      setRepoError('Repository owner and name are required');
+      return;
+    }
+
     setIssues([]);
     setRawIssuesData([]);
     setHasNextPage(true);
@@ -201,6 +226,7 @@ const App = () => {
     console.log('Repo changed to:', { owner, repo });
     setCurrentRepo({ owner, repo });
     saveLastRepo(owner, repo);
+    updateUrlParams(owner, repo);
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -216,7 +242,7 @@ const App = () => {
       lastScrollYRef.current = currentScrollY;
 
       console.log(
-        '🎯 handleScroll check - scrollY:',
+        'handleScroll check - scrollY:',
         currentScrollY,
         'lastScrollY:',
         lastScrollY,
@@ -231,7 +257,7 @@ const App = () => {
       );
 
       if (!isScrollingDown) {
-        console.log('❌ handleScroll blocked - scrolling up');
+        console.log('handleScroll blocked - scrolling up');
         return;
       }
 
@@ -247,13 +273,13 @@ const App = () => {
       }
 
       if (issues.length === 0) {
-        console.log('❌ handleScroll blocked - no issues loaded yet');
+        console.log('handleScroll blocked - no issues loaded yet');
         return;
       }
 
       const lastIssueElement = lastIssueRef.current;
       if (!lastIssueElement) {
-        console.log('❌ handleScroll blocked - no last issue element');
+        console.log('handleScroll blocked - no last issue element');
         return;
       }
 
@@ -272,12 +298,12 @@ const App = () => {
       );
 
       if (!isLastIssueVisible) {
-        console.log('❌ handleScroll blocked - last issue not yet visible');
+        console.log('handleScroll blocked - last issue not yet visible');
         return;
       }
 
       console.log(
-        '✅ handleScroll triggered, starting new load for repo:',
+        'handleScroll triggered, starting new load for repo:',
         currentRepoRef.current,
       );
       loadMoreTriggeredRef.current = true;
@@ -292,8 +318,12 @@ const App = () => {
       setIsRepoLoading(true);
       resetAndLoadNewRepo();
       setIsInitialized(true);
+
+      if (currentRepo.owner && currentRepo.repo) {
+        updateUrlParams(currentRepo.owner, currentRepo.repo);
+      }
     }
-  }, [isInitialized, resetAndLoadNewRepo]);
+  }, [isInitialized, resetAndLoadNewRepo, currentRepo]);
 
   useEffect(() => {
     if (isInitialized) {
