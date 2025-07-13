@@ -262,9 +262,12 @@ export const windowOpen = (_url: string) => {
     'addEventListener' in window ? 'addEventListener' : 'attachEvent';
   const eventer = (window as any)[eventMethod];
   const messageEvent = eventMethod === 'attachEvent' ? 'onmessage' : 'message';
-  const handleMessage = (e: any, resolve: any, reject: any) => {
+  const handleMessage = (e: any, resolve: any, reject: any, windowCheckInterval?: NodeJS.Timeout) => {
     if (authWindow) {
       authWindow.close();
+    }
+    if (windowCheckInterval) {
+      clearInterval(windowCheckInterval);
     }
     if (typeof e.data !== 'string') {
       return;
@@ -292,8 +295,22 @@ export const windowOpen = (_url: string) => {
     resolve(accessToken);
   };
 
-  return new Promise((resolve, reject) => {
-    eventer(messageEvent, (e: any) => handleMessage(e, resolve, reject), false);
+    return new Promise((resolve, reject) => {
+    const checkWindowClosed = () => {
+      if (authWindow && authWindow.closed) {
+        clearInterval(windowCheckInterval);
+        reject('Window closed by user');
+      }
+    };
+
+    const windowCheckInterval = setInterval(checkWindowClosed, 500);
+
+    eventer(messageEvent, (e: any) => handleMessage(e, resolve, reject, windowCheckInterval), false);
+
+    if (!authWindow) {
+      clearInterval(windowCheckInterval);
+      reject('Failed to open authentication window');
+    }
   });
 };
 
