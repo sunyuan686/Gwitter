@@ -142,7 +142,7 @@
     }
   `;return e.post("/graphql",{query:i,variables:{commentId:t}})};var $=i(692),S=i(8773),C=i(3115),z=i(6887),E=i(5986);let Z=function(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:window.location.search;if(!e)return{};let t="?"===e[0]?e.substring(1):e,i={};return t.split("&").forEach(e=>{let[t,o]=e.split("=");t&&(i[decodeURIComponent(t)]=decodeURIComponent(o))}),i},R=e=>e&&0!==e.length?e[0]:{name:"default",color:"1da1f2"},I=(e,t)=>e.map(e=>{let{id:i,number:o,createdAt:r,bodyHTML:n,title:a,url:s,author:l,reactions:d,comments:c,labels:p}=e,u=d.nodes.filter(e=>"HEART"===e.content),h=u.length,g=!!t&&u.some(e=>e.user.login===t);return{id:i,number:o,createdAt:r,bodyHTML:n,title:a,url:s,author:l,reactions:{totalCount:d.totalCount,userReacted:g,heartCount:h},comments:c.totalCount,label:R(p.nodes)}}),_=function(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"zh",i=new Date(e),o=new Date,r=["zh","zh-CN"].includes(t)?z.U:E._,n=(0,$.B)(i,o,{addSuffix:!0,locale:r});if(r===z.U){if(n.includes("秒")||n.includes("分钟"))return n;if(n.includes("小时")||n.includes("昨天"))return(0,S.l)(i,o,{locale:r});if(n.includes("天"))return n}else{if(n.includes("second")||n.includes("minute"))return n;if(n.includes("hour")||n.includes("yesterday"))return(0,S.l)(i,o,{locale:r});if(n.includes("day"))return n}return(0,C.WU)(i,"yyyy-MM-dd",{locale:r})},L=e=>(299*parseInt(e.substr(0,2),16)+587*parseInt(e.substr(2,2),16)+114*parseInt(e.substr(4,2),16))/1e3>=128?"black":"white",T=e=>Object.keys(e).map(t=>`${t}=${encodeURIComponent(e[t]||"")}`).join("&"),M=e=>{let t={width:Math.max(Math.floor(.4*window.outerWidth),400),height:Math.max(Math.floor(.4*window.outerHeight),400),left:0,top:0};t.left=Math.floor(window.screenX+(window.outerWidth-t.width)/2),t.top=Math.floor(window.screenY+(window.outerHeight-t.height)/3);let i=-1!==e.indexOf("?")?"&":"?",o=`${e}${i}`,r=`toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0,
     width=${t.width},height=${t.height},
-    left=${t.left},top=${t.top}`,n=window.open(o,"Gwitter OAuth Application",r),a="addEventListener"in window?"addEventListener":"attachEvent",s=window[a],l="attachEvent"===a?"onmessage":"message",d=(e,t,i)=>{if(n&&n.close(),"string"!=typeof e.data)return;let{result:o,error:r}=JSON.parse(e.data);r&&i(r),o||i("Unauthorised");let a=o.split("&").find(e=>e.startsWith("access_token="));a&&a.includes("=")||i("Unauthorised"),t(a.split("=")[1])};return new Promise((e,t)=>{s(l,i=>d(i,e,t),!1)})},A=e=>{let t=document.createElement("div");return t.innerHTML=e,t.querySelectorAll("a").forEach(e=>{e.setAttribute("target","_blank"),e.setAttribute("rel","noopener noreferrer")}),t.innerHTML},O="owner",P="repo",q=()=>{let e=new URLSearchParams(window.location.search),t=e.get(O),i=e.get(P);return t&&i?{owner:t,repo:i}:null},N=(e,t)=>{let i=new URL(window.location.href);i.searchParams.set(O,e),i.searchParams.set(P,t),window.history.replaceState(null,"",i.toString())},H=a.Z.span`
+    left=${t.left},top=${t.top}`,n=window.open(o,"Gwitter OAuth Application",r),a="addEventListener"in window?"addEventListener":"attachEvent",s=window[a],l="attachEvent"===a?"onmessage":"message",d=(e,t,i,o)=>{if(n&&n.close(),o&&clearInterval(o),"string"!=typeof e.data)return;let{result:r,error:a}=JSON.parse(e.data);a&&i(a),r||i("Unauthorised");let s=r.split("&").find(e=>e.startsWith("access_token="));s&&s.includes("=")||i("Unauthorised"),t(s.split("=")[1])};return new Promise((e,t)=>{let i=setInterval(()=>{n&&n.closed&&(clearInterval(i),t("Window closed by user"))},500);s(l,o=>d(o,e,t,i),!1),n||(clearInterval(i),t("Failed to open authentication window"))})},A=e=>{let t=document.createElement("div");return t.innerHTML=e,t.querySelectorAll("a").forEach(e=>{e.setAttribute("target","_blank"),e.setAttribute("rel","noopener noreferrer")}),t.innerHTML},O="owner",P="repo",q=()=>{let e=new URLSearchParams(window.location.search),t=e.get(O),i=e.get(P);return t&&i?{owner:t,repo:i}:null},N=(e,t)=>{let i=new URL(window.location.href);i.searchParams.set(O,e),i.searchParams.set(P,t),window.history.replaceState(null,"",i.toString())},H=a.Z.span`
   display: inline-block;
   line-height: 1;
   padding: 5px 6px;
@@ -1253,7 +1253,7 @@
   padding: 6px 10px;
   border: 1px solid #e1e8ed;
   border-radius: 16px;
-  font-size: 13px;
+  font-size: 12px;
   background: rgba(255, 255, 255, 0.9);
   color: #14171a;
   width: 180px;
@@ -1274,7 +1274,7 @@
     font-size: 12px;
   }
 `,tC=a.Z.span`
-  font-size: 13px;
+  font-size: 12px;
   color: #657786;
   font-weight: 500;
 `,tz=a.Z.button`
@@ -1306,7 +1306,7 @@
   padding: 6px 12px;
   border-radius: 16px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   transition: all 0.2s;
   display: flex;
@@ -1337,13 +1337,13 @@
   align-items: center;
   gap: 8px;
   border-radius: 16px;
-  font-size: 14px;
+  font-size: 12px;
 `,t_=a.Z.img`
   width: 25px;
   height: 25px;
   border-radius: 50%;
 `,tL=a.Z.span`
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: #14171a;
 `,tT=a.Z.div`
@@ -1367,9 +1367,9 @@
   align-items: center;
   gap: 8px;
   border-radius: 16px;
-  font-size: 14px;
+  font-size: 12px;
   color: #657786;
-`,tA=e=>{let{onRepoChange:t,currentRepo:i,isLoading:n=!1,error:a}=e,{t:s}=(0,l.$G)(),{isAuthenticated:d,user:p,login:u,logout:h,isLoading:g}=ed(),m=`${c.request.owner}/${c.request.repo}`,[x,f]=(0,r.useState)(i?`${i.owner}/${i.repo}`:m),[b,w]=(0,r.useState)(""),v=e=>{if(!e.trim())return!1;let t=e.split("/");return 2===t.length&&t[0].trim()&&t[1].trim()},y=()=>{if(w(""),!v(x))return void w(s("toolbar.invalidRepo"));let[e,i]=x.split("/");t&&t(e.trim(),i.trim())};return(0,r.useEffect)(()=>{let e=i?`${i.owner}/${i.repo}`:m;e!==x&&(f(e),w(""))},[i,m]),(0,o.jsxs)(tj,{children:[(0,o.jsxs)(tk,{children:[(0,o.jsx)(ty,{}),c.app.enableRepoSwitcher&&(0,o.jsxs)(t$,{children:[(0,o.jsx)(tC,{children:s("toolbar.repo")}),(0,o.jsx)(tS,{value:x,onChange:e=>{f(e.target.value),b&&w("")},onKeyPress:e=>{"Enter"===e.key&&v(x)&&y()},placeholder:s("toolbar.repoPlaceholder"),disabled:!c.app.enableRepoSwitcher,style:{borderColor:a||b?"#ff6b6b":"#e1e8ed",opacity:c.app.enableRepoSwitcher?1:.6,cursor:c.app.enableRepoSwitcher?"text":"not-allowed"}}),(0,o.jsx)(tz,{onClick:y,disabled:!v(x)||n,title:v(x)?"":s("toolbar.invalidRepo"),children:n?(0,o.jsx)(tT,{style:{width:"12px",height:"12px"}}):s("toolbar.apply")})]})]}),(0,o.jsx)(tE,{children:g?(0,o.jsxs)(tM,{children:[(0,o.jsx)(tT,{}),(0,o.jsx)("span",{children:s("auth.loading")})]}):d&&p?(0,o.jsxs)(tI,{children:[(0,o.jsx)(t_,{src:p.avatarUrl,alt:p.login}),(0,o.jsxs)(tL,{children:["@",p.login]}),(0,o.jsx)(tR,{onClick:h,children:s("auth.logout")})]}):(0,o.jsxs)(tZ,{onClick:u,children:[(0,o.jsx)("svg",{width:"14",height:"14",viewBox:"0 0 16 16",fill:"currentColor",children:(0,o.jsx)("path",{d:"M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"})}),s("auth.login")]})})]})},tO="gwitter_last_repo",tP=(e,t)=>{try{localStorage.setItem(tO,JSON.stringify({owner:e,repo:t})),console.log("Saved last repo:",`${e}/${t}`)}catch(e){console.warn("Failed to save last repo:",e)}},tq=()=>{try{let e=localStorage.getItem(tO);if(e){let t=JSON.parse(e);return console.log("Loaded last repo:",`${t.owner}/${t.repo}`),t}return null}catch(e){return console.warn("Failed to load last repo:",e),null}},tN=a.Z.div`
+`,tA=e=>{let{onRepoChange:t,currentRepo:i,isLoading:n=!1,error:a}=e,{t:s}=(0,l.$G)(),{isAuthenticated:d,user:p,login:u,logout:h,isLoading:g}=ed(),m=`${c.request.owner}/${c.request.repo}`,[x,f]=(0,r.useState)(i?`${i.owner}/${i.repo}`:m),[b,w]=(0,r.useState)(""),v=e=>{if(!e.trim())return!1;let t=e.split("/");return 2===t.length&&t[0].trim()&&t[1].trim()},y=()=>{if(w(""),!v(x))return void w(s("toolbar.invalidRepo"));let[e,i]=x.split("/");t&&t(e.trim(),i.trim())};return(0,r.useEffect)(()=>{let e=i?`${i.owner}/${i.repo}`:m;e!==x&&(f(e),w(""))},[i,m]),(0,o.jsxs)(tj,{children:[(0,o.jsxs)(tk,{children:[(0,o.jsx)(ty,{}),c.app.enableRepoSwitcher&&(0,o.jsxs)(t$,{children:[(0,o.jsx)(tC,{children:s("toolbar.repo")}),(0,o.jsx)(tS,{value:x,onChange:e=>{f(e.target.value),b&&w("")},onKeyPress:e=>{"Enter"===e.key&&v(x)&&y()},placeholder:s("toolbar.repoPlaceholder"),disabled:!c.app.enableRepoSwitcher,style:{borderColor:a||b?"#ff6b6b":"#e1e8ed",opacity:c.app.enableRepoSwitcher?1:.6,cursor:c.app.enableRepoSwitcher?"text":"not-allowed"}}),(0,o.jsx)(tz,{onClick:y,disabled:!v(x)||n,title:v(x)?"":s("toolbar.invalidRepo"),children:n?(0,o.jsx)(tT,{style:{width:"12px",height:"12px"}}):s("toolbar.apply")})]})]}),(0,o.jsx)(tE,{children:g?(0,o.jsxs)(tM,{children:[(0,o.jsx)(tT,{}),(0,o.jsx)("span",{children:s("auth.loading")})]}):d&&p?(0,o.jsxs)(tI,{children:[(0,o.jsx)(t_,{src:p.avatarUrl,alt:p.login}),(0,o.jsxs)(tL,{children:["@",p.login]}),(0,o.jsx)(tR,{onClick:h,children:s("auth.logout")})]}):(0,o.jsxs)(tZ,{onClick:u,children:[(0,o.jsx)("svg",{width:"12",height:"12",viewBox:"0 0 16 16",fill:"currentColor",children:(0,o.jsx)("path",{d:"M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"})}),s("auth.login")]})})]})},tO="gwitter_last_repo",tP=(e,t)=>{try{localStorage.setItem(tO,JSON.stringify({owner:e,repo:t})),console.log("Saved last repo:",`${e}/${t}`)}catch(e){console.warn("Failed to save last repo:",e)}},tq=()=>{try{let e=localStorage.getItem(tO);if(e){let t=JSON.parse(e);return console.log("Loaded last repo:",`${t.owner}/${t.repo}`),t}return null}catch(e){return console.warn("Failed to load last repo:",e),null}},tN=a.Z.div`
   box-sizing: border-box;
   * {
     box-sizing: border-box;
