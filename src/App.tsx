@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import About from './components/About';
 import AnimatedCard from './components/AnimatedCard';
@@ -30,14 +30,11 @@ const IssuesContainer = styled.div`
   /* letter-spacing: 1px; */
 `;
 
-const LoadingPlaceholder = styled.div<{ visible: boolean }>`
+const LoadingPlaceholder = styled(motion.div)`
   min-height: 200px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
-  opacity: ${(props) => (props.visible ? 1 : 0)};
-  transition: opacity 0.3s ease;
 `;
 
 const ErrorContainer = styled.div`
@@ -418,10 +415,20 @@ const App = () => {
           </IssuesContainer>
         </>
       )}
-      <LoadingPlaceholder visible={true}>
-        <SkeletonCard />
-        <SkeletonCard />
-      </LoadingPlaceholder>
+      {hasNextPage && (
+        <LoadingPlaceholder
+          initial={{ opacity: 0, y: 20 }}
+          animate={
+            isLoading
+              ? { opacity: 1, y: 0 }
+              : { opacity: 0, y: 20 }
+          }
+          transition={{ duration: 0.15, ease: 'easeOut' }}
+        >
+          <SkeletonCard />
+          <SkeletonCard />
+        </LoadingPlaceholder>
+      )}
       {repoError && (
         <IssuesContainer>
           <ErrorContainer>
