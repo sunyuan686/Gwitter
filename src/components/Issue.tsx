@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import 'github-markdown-css/github-markdown.css';
+import 'github-markdown-css/github-markdown-light.css';
 import { useTranslation } from 'react-i18next';
 import { formatDate, ProcessedIssue, processLinksInHTML } from '../utils';
 import Interaction from './Interaction';
