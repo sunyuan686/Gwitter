@@ -57,6 +57,10 @@ jobs:
         GWITTER_OWNER: ${{ secrets.GWITTER_OWNER }}
         GWITTER_REPO: ${{ secrets.GWITTER_REPO }}
     
+    - name: 创建 CNAME 文件
+      if: github.ref == 'refs/heads/main'
+      run: echo "x.xixihaha.tech" > ./dist/CNAME
+    
     - name: 上传构建产物
       uses: actions/upload-pages-artifact@v3
       with:
