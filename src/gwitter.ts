@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import AuthWindow from './AuthWindow';
-import { setConfig } from './config';
+import { setConfig, validateConfig } from './config';
 import './i18n';
 import type { GwitterOptions } from './types/global';
 import { parseUrl } from './utils';
@@ -36,6 +36,11 @@ function gwitter(options: GwitterOptions = {}) {
   }
 
   setConfig(options.config || {});
+  
+  const isConfigValid = validateConfig();
+  if (!isConfigValid) {
+    console.error('Gwitter: Configuration validation failed. Please check your environment variables.');
+  }
 
   return renderGwitter(container);
 }

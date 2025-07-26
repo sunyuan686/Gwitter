@@ -1,0 +1,48 @@
+name: 部署到 GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+    
+    - name: 设置 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: 安装 pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    
+    - name: 安装依赖
+      run: pnpm install
+    
+    - name: 构建项目
+      run: pnpm run build
+      env:
+        GWITTER_CLIENT_ID: ${{ secrets.GWITTER_CLIENT_ID }}
+        GWITTER_CLIENT_SECRET: ${{ secrets.GWITTER_CLIENT_SECRET }}
+        GWITTER_TOKEN_1: ${{ secrets.GWITTER_TOKEN_1 }}
+        GWITTER_TOKEN_2: ${{ secrets.GWITTER_TOKEN_2 }}
+        GWITTER_AUTO_PROXY: ${{ secrets.GWITTER_AUTO_PROXY }}
+        GWITTER_OWNER: ${{ secrets.GWITTER_OWNER }}
+        GWITTER_REPO: ${{ secrets.GWITTER_REPO }}
+    
+    - name: 部署到 GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        cname: simonaking.com
