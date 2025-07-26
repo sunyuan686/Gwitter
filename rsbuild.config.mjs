@@ -67,6 +67,6 @@ export default defineConfig({
     ],
   },
   output: {
-    assetPrefix: 'https://simonaking.com/Gwitter/',
+    assetPrefix: '/Gwitter/',
   },
 });
